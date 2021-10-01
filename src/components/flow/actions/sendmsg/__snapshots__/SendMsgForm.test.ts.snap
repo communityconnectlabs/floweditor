@@ -87,61 +87,99 @@ exports[`SendMsgForm render should render 1`] = `
       },
       Object {
         "body": <React.Fragment>
-          <p>
-            Add up to 3 attachments to each message. The attachment can be a file you upload or a dynamic URL using expressions and variables from your Flow.
-          </p>
-          <div
-            className="url_attachment"
-          >
+          <React.Fragment>
+            <p>
+              Add up to 3 attachments to each message. The attachment can be a file you upload or a dynamic URL using expressions and variables from your Flow.
+            </p>
+            <div
+              className="url_attachment"
+            >
+              <div
+                className="type_choice"
+              >
+                <SelectElement
+                  entry={
+                    Object {
+                      "value": null,
+                    }
+                  }
+                  name="Type Options"
+                  onChange={[Function]}
+                  options={
+                    Array [
+                      Object {
+                        "name": "Image URL",
+                        "value": "image",
+                      },
+                      Object {
+                        "name": "Audio URL",
+                        "value": "audio",
+                      },
+                      Object {
+                        "name": "Video URL",
+                        "value": "video",
+                      },
+                      Object {
+                        "name": "PDF Document URL",
+                        "value": "application",
+                      },
+                      Object {
+                        "name": "Upload Attachment",
+                        "value": "upload",
+                      },
+                    ]
+                  }
+                  placeholder="Add Attachment"
+                  style="small"
+                />
+              </div>
+            </div>
+            <input
+              onChange={[Function]}
+              style={
+                Object {
+                  "display": "none",
+                }
+              }
+              type="file"
+            />
+          </React.Fragment>
+          <React.Fragment>
+            <span
+              className="span_separator"
+            />
+            <p>
+              Receive attachment: 
+              <br />
+              Select a type of attachment to receive from a user as an answer choice. 
+              <br />
+              Note: only available for channels with file upload capabilities.
+            </p>
             <div
               className="type_choice"
             >
               <SelectElement
+                clearable={true}
                 entry={
                   Object {
-                    "value": null,
+                    "value": undefined,
                   }
                 }
-                name="Type Options"
+                name="ReceiveAttachment"
                 onChange={[Function]}
                 options={
                   Array [
                     Object {
-                      "name": "Image URL",
+                      "name": "Image",
                       "value": "image",
-                    },
-                    Object {
-                      "name": "Audio URL",
-                      "value": "audio",
-                    },
-                    Object {
-                      "name": "Video URL",
-                      "value": "video",
-                    },
-                    Object {
-                      "name": "PDF Document URL",
-                      "value": "application",
-                    },
-                    Object {
-                      "name": "Upload Attachment",
-                      "value": "upload",
                     },
                   ]
                 }
-                placeholder="Add Attachment"
+                placeholder="Receive Attachment"
                 style="small"
               />
             </div>
-          </div>
-          <input
-            onChange={[Function]}
-            style={
-              Object {
-                "display": "none",
-              }
-            }
-            type="file"
-          />
+          </React.Fragment>
         </React.Fragment>,
         "checked": false,
         "name": "Attachments",
