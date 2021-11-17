@@ -363,13 +363,13 @@ export default class MsgLocalizationForm extends React.Component<
             </div>
             <div className={styles.translate_to_item}>
               <label className={styles.translation_label}>
-                {`Approximate ${translation}`}
+                Approximate Translation
                 <HelpIcon iconColor={variables.orange} iconSize="12px" dataFor="systemTranslate">
-                  <b>{`Approximate ${translation}`}</b>
+                  <b>Approximate Translation</b>
                   <p>
                     This translation will give you a general sense of the text you are inputting.
-                    This is only intended to be a guide to help your programing and not will be used
-                    in production.
+                    This is only intended to be a guide to help your programming and will not be
+                    used in production.
                   </p>
                 </HelpIcon>
               </label>
