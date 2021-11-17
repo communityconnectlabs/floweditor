@@ -22,6 +22,8 @@ import { Attachment, renderAttachments } from '../sendmsg/attachments';
 import { AxiosResponse } from 'axios';
 import { Fixy } from '../../../fixy/Fixy';
 import Loading from '../../../loading/Loading';
+import HelpIcon from '../../../helpicon/HelpIcon';
+import variables from '../../../../variables.module.scss';
 
 export interface MsgLocalizationFormState extends FormState {
   message: StringEntry;
@@ -360,7 +362,17 @@ export default class MsgLocalizationForm extends React.Component<
               />
             </div>
             <div className={styles.translate_to_item}>
-              <label className={styles.translation_label}>{`System ${translation}`}</label>
+              <label className={styles.translation_label}>
+                {`Approximate ${translation}`}
+                <HelpIcon iconColor={variables.orange} iconSize="12px" dataFor="systemTranslate">
+                  <b>{`Approximate ${translation}`}</b>
+                  <p>
+                    This translation will give you a general sense of the text you are inputting.
+                    This is only intended to be a guide to help your programing and not will be used
+                    in production.
+                  </p>
+                </HelpIcon>
+              </label>
               <p className={styles.system_translate}>
                 {this.state.systemTranslate.length > 0 ? (
                   this.state.systemTranslate

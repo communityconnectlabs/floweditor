@@ -11,6 +11,7 @@
   text-align: center;
   opacity: 1 !important;
   pointer-events: auto !important;
+  z-index: 9999;
 
   &.bigTooltip {
     width: 450px;
