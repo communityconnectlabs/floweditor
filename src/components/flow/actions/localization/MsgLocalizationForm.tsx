@@ -19,11 +19,12 @@ import { Trans } from 'react-i18next';
 import { range, renderIf } from 'utils';
 import { renderIssues } from '../helpers';
 import { Attachment, renderAttachments } from '../sendmsg/attachments';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Fixy } from '../../../fixy/Fixy';
 import Loading from '../../../loading/Loading';
 import HelpIcon from '../../../helpicon/HelpIcon';
 import variables from '../../../../variables.module.scss';
+import { getCookie } from '../../../../external';
 
 export interface MsgLocalizationFormState extends FormState {
   message: StringEntry;
@@ -42,16 +43,30 @@ export default class MsgLocalizationForm extends React.Component<
   public constructor(props: LocalizationFormProps, context: any) {
     super(props);
 
-    let preState = initializeLocalizedForm(this.props.nodeSettings);
-    if (context.config.onSystemTranslate) {
-      context.config
-        .onSystemTranslate(
-          props.language.id,
-          (this.props.nodeSettings.originalAction as SendMsg).text
+    this.state = initializeLocalizedForm(this.props.nodeSettings);
+    if (context.config.endpoints.translation) {
+      // if we have a csrf in our cookie, pass it along as a header
+      const csrf = getCookie('csrftoken');
+      const headers = csrf ? { 'X-CSRFToken': csrf } : {};
+
+      axios
+        .post(
+          context.config.endpoints.translation,
+          {
+            text: (this.props.nodeSettings.originalAction as SendMsg).text,
+            target: props.language.id
+          },
+          {
+            headers,
+            timeout: 0
+          }
         )
-        .then((translated: string) => (preState.systemTranslate = translated));
+        .then(response => {
+          if (response.status === 200) {
+            this.setState({ systemTranslate: response.data.translated });
+          }
+        });
     }
-    this.state = preState;
     bindCallbacks(this, {
       include: [/^handle/, /^on/]
     });
@@ -335,7 +350,7 @@ export default class MsgLocalizationForm extends React.Component<
         buttons={this.getButtons()}
         tabs={tabs}
       >
-        {renderIf(!!this.context.config.onSystemTranslate)(
+        {renderIf(!!this.context.config.endpoints.translation)(
           <label className={styles.translation_label}>Original Text</label>
         )}
         <div data-spec="translation-container">
@@ -344,7 +359,7 @@ export default class MsgLocalizationForm extends React.Component<
           </div>
         </div>
 
-        {renderIf(!!this.context.config.onSystemTranslate)(
+        {renderIf(!!this.context.config.endpoints.translation)(
           <div className={styles.translate_to_container}>
             <div className={styles.translate_to_item}>
               <label

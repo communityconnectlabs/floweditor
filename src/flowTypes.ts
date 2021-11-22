@@ -42,6 +42,7 @@ export interface Endpoints {
   environment: string;
   languages: string;
   templates: string;
+  translation?: string;
   completion: string;
   functions: string;
   simulateStart: string;
@@ -64,7 +65,6 @@ export interface FlowEditorConfig {
   onLoad?: () => void;
   onActivityClicked?: (uuid: string) => void;
   onChangeLanguage?: (code: string, name: string) => void;
-  onSystemTranslate?: (code: string, text: string) => Promise<string>;
 
   // help links
   help: { [key: string]: string };
