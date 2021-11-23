@@ -151,11 +151,16 @@ export class NodeEditor extends React.Component<NodeEditorProps> {
         const { localization: LocalizationForm } = typeConfig;
 
         if (LocalizationForm) {
+          let flowLanguage = this.props.definition.language;
+          if (!flowLanguage || flowLanguage === 'base') {
+            flowLanguage = 'eng';
+          }
           const localizationProps: LocalizationFormProps = {
             updateLocalizations: this.updateLocalizations,
             nodeSettings: this.props.settings,
             onClose: this.close,
             language: this.props.language,
+            flowLanguage: flowLanguage,
             helpArticles: this.props.helpArticles,
             issues: this.props.issues.filter(
               (issue: FlowIssue) => issue.language === this.props.language.id

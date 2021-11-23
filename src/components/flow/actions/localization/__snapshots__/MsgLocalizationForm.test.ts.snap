@@ -288,6 +288,7 @@ Object {
   "systemTranslate": "",
   "templateVariables": Array [],
   "templating": null,
+  "translationInProgress": false,
   "valid": true,
 }
 `;
@@ -327,6 +328,7 @@ Object {
   "systemTranslate": "",
   "templateVariables": Array [],
   "templating": null,
+  "translationInProgress": true,
   "valid": true,
 }
 `;

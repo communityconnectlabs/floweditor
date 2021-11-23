@@ -34,39 +34,19 @@ export interface MsgLocalizationFormState extends FormState {
   templating: MsgTemplating;
   attachments: Attachment[];
   systemTranslate: string;
+  translationInProgress: boolean;
 }
 
 export default class MsgLocalizationForm extends React.Component<
   LocalizationFormProps,
   MsgLocalizationFormState
 > {
+  private timer: any = null;
   public constructor(props: LocalizationFormProps, context: any) {
     super(props);
 
     this.state = initializeLocalizedForm(this.props.nodeSettings);
-    if (context.config.endpoints.translation) {
-      // if we have a csrf in our cookie, pass it along as a header
-      const csrf = getCookie('csrftoken');
-      const headers = csrf ? { 'X-CSRFToken': csrf } : {};
 
-      axios
-        .post(
-          context.config.endpoints.translation,
-          {
-            text: (this.props.nodeSettings.originalAction as SendMsg).text,
-            target: props.language.id
-          },
-          {
-            headers,
-            timeout: 0
-          }
-        )
-        .then(response => {
-          if (response.status === 200) {
-            this.setState({ systemTranslate: response.data.translated });
-          }
-        });
-    }
     bindCallbacks(this, {
       include: [/^handle/, /^on/]
     });
@@ -76,8 +56,64 @@ export default class MsgLocalizationForm extends React.Component<
     config: fakePropType
   };
 
+  public componentDidMount() {
+    this.processTranslation();
+  }
+
+  private processTranslation(): void {
+    if (this.context.config.endpoints.translation) {
+      // if we have a csrf in our cookie, pass it along as a header
+      let csrf = getCookie('csrftoken');
+      let headers = csrf ? { 'X-CSRFToken': csrf } : {};
+
+      if (this.state.message.value.length === 0) {
+        this.timer = null;
+        this.setState({
+          systemTranslate: (this.props.nodeSettings.originalAction as SendMsg).text,
+          translationInProgress: false
+        });
+        return;
+      }
+
+      axios
+        .post(
+          this.context.config.endpoints.translation,
+          {
+            text: this.state.message.value,
+            target: this.props.flowLanguage,
+            source: this.props.language.id
+          },
+          {
+            headers,
+            timeout: 0
+          }
+        )
+        .then(response => {
+          if (response.status === 200) {
+            this.timer = null;
+            this.setState({
+              systemTranslate: response.data.translated,
+              translationInProgress: false
+            });
+          }
+        })
+        .catch(() => {
+          this.timer = null;
+          this.setState({ translationInProgress: false });
+        });
+    }
+  }
+
+  private startOrDelayTranslationProcess(): void {
+    clearTimeout(this.timer);
+    this.setState({ translationInProgress: true });
+    this.timer = setTimeout(this.processTranslation.bind(this), 1000);
+  }
+
   public handleMessageUpdate(text: string): boolean {
-    return this.handleUpdate({ text });
+    let status = this.handleUpdate({ text });
+    this.startOrDelayTranslationProcess();
+    return status;
   }
 
   public handleQuickRepliesUpdate(quickReplies: string[]): boolean {
@@ -389,7 +425,7 @@ export default class MsgLocalizationForm extends React.Component<
                 </HelpIcon>
               </label>
               <p className={styles.system_translate}>
-                {this.state.systemTranslate.length > 0 ? (
+                {!this.state.translationInProgress ? (
                   this.state.systemTranslate
                 ) : (
                   <Fixy>
