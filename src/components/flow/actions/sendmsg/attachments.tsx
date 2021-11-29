@@ -48,7 +48,10 @@ const isAttachmentsValid = (
   const fileType = file.type.split('/')[0];
   const fileEncoding = file.name.split('.').pop();
 
-  if (file.type !== 'application/pdf' && !['audio', 'video', 'image'].includes(fileType)) {
+  if (['vcf', 'vcard'].includes(fileEncoding)) {
+    // Allow Virtual Contact File format
+    isValid = true;
+  } else if (file.type !== 'application/pdf' && !['audio', 'video', 'image'].includes(fileType)) {
     title = 'Invalid Attachment';
     message = 'Attachments must be either PDF, video, audio, or an image.';
     isValid = false;
