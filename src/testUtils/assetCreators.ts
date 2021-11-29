@@ -421,6 +421,7 @@ export const getLocalizationFormProps = (
   const language = lang || { id: 'eng', name: 'English', type: AssetType.Language };
   return {
     language,
+    flowLanguage: 'eng',
     onClose: jest.fn(),
     updateLocalizations: jest.fn(),
     issues: [],

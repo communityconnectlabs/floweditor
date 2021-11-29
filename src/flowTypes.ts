@@ -42,6 +42,7 @@ export interface Endpoints {
   environment: string;
   languages: string;
   templates: string;
+  translation?: string;
   completion: string;
   functions: string;
   simulateStart: string;

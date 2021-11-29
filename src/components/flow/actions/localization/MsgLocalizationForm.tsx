@@ -16,10 +16,15 @@ import { MaxOfTenItems, validate } from 'store/validators';
 import { initializeLocalizedForm } from './helpers';
 import i18n from 'config/i18n';
 import { Trans } from 'react-i18next';
-import { range } from 'utils';
+import { range, renderIf } from 'utils';
 import { renderIssues } from '../helpers';
 import { Attachment, renderAttachments } from '../sendmsg/attachments';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { Fixy } from '../../../fixy/Fixy';
+import Loading from '../../../loading/Loading';
+import HelpIcon from '../../../helpicon/HelpIcon';
+import variables from '../../../../variables.module.scss';
+import { getCookie } from '../../../../external';
 
 export interface MsgLocalizationFormState extends FormState {
   message: StringEntry;
@@ -28,15 +33,20 @@ export interface MsgLocalizationFormState extends FormState {
   templateVariables: StringEntry[];
   templating: MsgTemplating;
   attachments: Attachment[];
+  systemTranslate: string;
+  translationInProgress: boolean;
 }
 
 export default class MsgLocalizationForm extends React.Component<
   LocalizationFormProps,
   MsgLocalizationFormState
 > {
-  constructor(props: LocalizationFormProps) {
+  private timer: any = null;
+  public constructor(props: LocalizationFormProps, context: any) {
     super(props);
+
     this.state = initializeLocalizedForm(this.props.nodeSettings);
+
     bindCallbacks(this, {
       include: [/^handle/, /^on/]
     });
@@ -46,8 +56,64 @@ export default class MsgLocalizationForm extends React.Component<
     config: fakePropType
   };
 
+  public componentDidMount() {
+    this.processTranslation();
+  }
+
+  private processTranslation(): void {
+    if (this.context.config.endpoints.translation) {
+      // if we have a csrf in our cookie, pass it along as a header
+      let csrf = getCookie('csrftoken');
+      let headers = csrf ? { 'X-CSRFToken': csrf } : {};
+
+      if (this.state.message.value.length === 0) {
+        this.timer = null;
+        this.setState({
+          systemTranslate: (this.props.nodeSettings.originalAction as SendMsg).text,
+          translationInProgress: false
+        });
+        return;
+      }
+
+      axios
+        .post(
+          this.context.config.endpoints.translation,
+          {
+            text: this.state.message.value,
+            target: this.props.flowLanguage,
+            source: this.props.language.id
+          },
+          {
+            headers,
+            timeout: 0
+          }
+        )
+        .then(response => {
+          if (response.status === 200) {
+            this.timer = null;
+            this.setState({
+              systemTranslate: response.data.translated,
+              translationInProgress: false
+            });
+          }
+        })
+        .catch(() => {
+          this.timer = null;
+          this.setState({ translationInProgress: false });
+        });
+    }
+  }
+
+  private startOrDelayTranslationProcess(): void {
+    clearTimeout(this.timer);
+    this.setState({ translationInProgress: true });
+    this.timer = setTimeout(this.processTranslation.bind(this), 1000);
+  }
+
   public handleMessageUpdate(text: string): boolean {
-    return this.handleUpdate({ text });
+    let status = this.handleUpdate({ text });
+    this.startOrDelayTranslationProcess();
+    return status;
   }
 
   public handleQuickRepliesUpdate(quickReplies: string[]): boolean {
@@ -320,22 +386,66 @@ export default class MsgLocalizationForm extends React.Component<
         buttons={this.getButtons()}
         tabs={tabs}
       >
+        {renderIf(!!this.context.config.endpoints.translation)(
+          <label className={styles.translation_label}>Original Text</label>
+        )}
         <div data-spec="translation-container">
           <div data-spec="text-to-translate" className={styles.translate_from}>
             {(this.props.nodeSettings.originalAction as SendMsg).text}
           </div>
         </div>
 
-        <TextInputElement
-          name={i18n.t('forms.message', 'Message')}
-          showLabel={false}
-          onChange={this.handleMessageUpdate}
-          entry={this.state.message}
-          placeholder={`${this.props.language.name} ${translation}`}
-          autocomplete={true}
-          focus={true}
-          textarea={true}
-        />
+        {renderIf(!!this.context.config.endpoints.translation)(
+          <div className={styles.translate_to_container}>
+            <div className={styles.translate_to_item}>
+              <label
+                className={styles.translation_label}
+              >{`${this.props.language.name} ${translation}`}</label>
+              <TextInputElement
+                name={i18n.t('forms.message', 'Message')}
+                showLabel={false}
+                onChange={this.handleMessageUpdate}
+                entry={this.state.message}
+                placeholder={`${this.props.language.name} ${translation}`}
+                autocomplete={true}
+                focus={true}
+                textarea={true}
+              />
+            </div>
+            <div className={styles.translate_to_item}>
+              <label className={styles.translation_label}>
+                Approximate Translation
+                <HelpIcon iconColor={variables.orange} iconSize="12px" dataFor="systemTranslate">
+                  <b>Approximate Translation</b>
+                  <p>
+                    This translation will give you a general sense of the text you are inputting.
+                    This is only intended to be a guide to help your programming and will not be
+                    used in production.
+                  </p>
+                </HelpIcon>
+              </label>
+              <p className={styles.system_translate}>
+                {!this.state.translationInProgress ? (
+                  this.state.systemTranslate
+                ) : (
+                  <Fixy>
+                    <Loading units={5} color="#3498db" size={7} />
+                  </Fixy>
+                )}
+              </p>
+            </div>
+          </div>,
+          <TextInputElement
+            name={i18n.t('forms.message', 'Message')}
+            showLabel={false}
+            onChange={this.handleMessageUpdate}
+            entry={this.state.message}
+            placeholder={`${this.props.language.name} ${translation}`}
+            autocomplete={true}
+            focus={true}
+            textarea={true}
+          />
+        )}
 
         {audioButton}
         {renderIssues(this.props)}
