@@ -288,7 +288,7 @@ Object {
   "systemTranslate": "",
   "templateVariables": Array [],
   "templating": null,
-  "translationInProgress": false,
+  "translationInProgress": true,
   "valid": true,
 }
 `;
