@@ -96,7 +96,7 @@
   border-radius: 5px;
   padding: 10px;
   border: 1px solid darken(#d9f3f2, 5%);
-  margin: 5px 0 12px 0;
+  margin: 5px 0 7px 0;
 }
 
 .translate_to {
@@ -105,10 +105,33 @@
 }
 
 .translation_label {
+  height: 25px;
   margin-left: 2px;
   margin-bottom: 5px;
   font-weight: 400;
   color: #666;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  .translate_button {
+    justify-self: flex-end;
+    margin-left: auto;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background-color: orange;
+    color: #ffffff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darkorange;
+    }
+
+    &:active {
+      background-color: orange;
+    }
+  }
 }
 
 .translate_to_container {

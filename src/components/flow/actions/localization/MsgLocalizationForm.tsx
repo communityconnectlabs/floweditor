@@ -41,7 +41,6 @@ export default class MsgLocalizationForm extends React.Component<
   LocalizationFormProps,
   MsgLocalizationFormState
 > {
-  private timer: any = null;
   public constructor(props: LocalizationFormProps, context: any) {
     super(props);
 
@@ -61,13 +60,13 @@ export default class MsgLocalizationForm extends React.Component<
   }
 
   private processTranslation(): void {
+    this.setState({ translationInProgress: true });
     if (this.context.config.endpoints.translation) {
       // if we have a csrf in our cookie, pass it along as a header
       let csrf = getCookie('csrftoken');
       let headers = csrf ? { 'X-CSRFToken': csrf } : {};
 
       if (this.state.message.value.length === 0) {
-        this.timer = null;
         this.setState({
           systemTranslate: (this.props.nodeSettings.originalAction as SendMsg).text,
           translationInProgress: false
@@ -90,7 +89,6 @@ export default class MsgLocalizationForm extends React.Component<
         )
         .then(response => {
           if (response.status === 200) {
-            this.timer = null;
             this.setState({
               systemTranslate: response.data.translated,
               translationInProgress: false
@@ -98,21 +96,13 @@ export default class MsgLocalizationForm extends React.Component<
           }
         })
         .catch(() => {
-          this.timer = null;
           this.setState({ translationInProgress: false });
         });
     }
   }
 
-  private startOrDelayTranslationProcess(): void {
-    clearTimeout(this.timer);
-    this.setState({ translationInProgress: true });
-    this.timer = setTimeout(this.processTranslation.bind(this), 1000);
-  }
-
   public handleMessageUpdate(text: string): boolean {
     let status = this.handleUpdate({ text });
-    this.startOrDelayTranslationProcess();
     return status;
   }
 
@@ -423,6 +413,12 @@ export default class MsgLocalizationForm extends React.Component<
                     used in production.
                   </p>
                 </HelpIcon>
+                <div
+                  className={styles.translate_button}
+                  onClick={this.processTranslation.bind(this)}
+                >
+                  Translate
+                </div>
               </label>
               <p className={styles.system_translate}>
                 {!this.state.translationInProgress ? (
