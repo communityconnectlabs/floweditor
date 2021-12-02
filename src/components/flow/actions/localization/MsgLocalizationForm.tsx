@@ -198,21 +198,13 @@ export default class MsgLocalizationForm extends React.Component<
   }
 
   private getButtons(): ButtonSet {
-    let buttons = {
+    return {
       primary: { name: i18n.t('buttons.ok', 'Ok'), onClick: this.handleSave },
       secondary: {
         name: i18n.t('buttons.cancel', 'Cancel'),
         onClick: () => this.props.onClose(true)
       }
     };
-    if (this.context.config.endpoints.translation) {
-      // @ts-ignore
-      buttons.tertiary = {
-        name: 'Translate',
-        onClick: this.processTranslation.bind(this)
-      };
-    }
-    return buttons;
   }
 
   private handleQuickReplyChanged(quickReplies: string[]): void {
@@ -421,6 +413,12 @@ export default class MsgLocalizationForm extends React.Component<
                     used in production.
                   </p>
                 </HelpIcon>
+                <div
+                  className={styles.translate_button}
+                  onClick={this.processTranslation.bind(this)}
+                >
+                  Translate
+                </div>
               </label>
               <p className={styles.system_translate}>
                 {!this.state.translationInProgress ? (
