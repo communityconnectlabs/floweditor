@@ -17,7 +17,7 @@ import { initializeLocalizedForm } from './helpers';
 import i18n from 'config/i18n';
 import { Trans } from 'react-i18next';
 import { range, renderIf } from 'utils';
-import { renderIssues } from '../helpers';
+import { renderIssues, decodeHTML } from '../helpers';
 import { Attachment, renderAttachments } from '../sendmsg/attachments';
 import axios, { AxiosResponse } from 'axios';
 import { Fixy } from '../../../fixy/Fixy';
@@ -68,7 +68,7 @@ export default class MsgLocalizationForm extends React.Component<
 
       if (this.state.message.value.length === 0) {
         this.setState({
-          systemTranslate: (this.props.nodeSettings.originalAction as SendMsg).text,
+          systemTranslate: '',
           translationInProgress: false
         });
         return;
@@ -422,7 +422,7 @@ export default class MsgLocalizationForm extends React.Component<
               </label>
               <p className={styles.system_translate}>
                 {!this.state.translationInProgress ? (
-                  this.state.systemTranslate
+                  decodeHTML(this.state.systemTranslate)
                 ) : (
                   <Fixy>
                     <Loading units={5} color="#3498db" size={7} />

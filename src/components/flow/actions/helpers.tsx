@@ -252,3 +252,12 @@ export const getRecipientsByAsset = (assets: Asset[], type: AssetType): any[] =>
       return { uuid: asset.id, name: asset.name };
     });
 };
+
+export const decodeHTML = (text: string): string => {
+  let resultText = '';
+  let textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  resultText = textArea.innerText;
+  textArea.remove();
+  return resultText;
+};
