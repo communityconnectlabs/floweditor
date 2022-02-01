@@ -529,11 +529,11 @@ export default class ResponseRouterForm extends React.Component<
       isTestingAvailable || this.state.automatedTestCases[this.state.testingLang.value].length > 0;
     const tabs = [
       {
-        name: 'Testing',
+        name: 'Test Responses',
         checked: checked,
         body: this.renderTestingTab(),
         hasErrors: !checked,
-        nameStyle: checked ? '' : styles.testingTabNameError,
+        icon: !checked ? 'fe-x' : null,
         onClick: () => {
           this.retestAutomatedTestCases();
         }
