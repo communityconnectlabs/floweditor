@@ -35,11 +35,11 @@ export interface Endpoints {
   channels: string;
   classifiers: string;
   ticketers: string;
+  users: string;
+  topics: string;
   environment: string;
   languages: string;
   templates: string;
-  completion: string;
-  functions: string;
   simulateStart: string;
   simulateResume: string;
   editor: string;
@@ -56,6 +56,7 @@ export interface FlowEditorConfig {
   debug?: boolean;
   path?: string;
   headers?: any;
+  brand: string;
   onLoad?: () => void;
   onActivityClicked?: (uuid: string) => void;
   onChangeLanguage?: (code: string, name: string) => void;
@@ -113,6 +114,20 @@ export enum FlowIssueType {
   MISSING_DEPENDENCY = 'missing_dependency',
   LEGACY_EXTRA = 'legacy_extra',
   INVALID_REGEX = 'invalid_regex'
+}
+
+export interface User {
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  role?: string;
+  created_on?: string;
+}
+
+export interface Topic {
+  uuid: string;
+  name: string;
+  created_on?: string;
 }
 
 export interface FlowIssue {
@@ -306,7 +321,7 @@ export type SetContactProperty =
 
 export type SetContactAttribute = SetContactField | SetContactProperty;
 
-// tslint:disable-next-line:no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Missing extends Action {}
 
 export interface RecipientsAction extends Action {
@@ -425,9 +440,11 @@ export interface CallWebhook extends Action {
 
 export interface OpenTicket extends Action {
   ticketer: Ticketer;
-  subject: string;
+  subject?: string;
+  topic?: Topic;
   body: string;
   result_name: string;
+  assignee?: User;
 }
 
 export interface StartFlow extends Action {

@@ -3,7 +3,7 @@ import { MediaPlayer } from 'components/mediaplayer/MediaPlayer';
 import Modal from 'components/modal/Modal';
 import styles from 'components/simulator/LogEvent.module.scss';
 import { Types } from 'config/interfaces';
-import { Flow, Group, Label } from 'flowTypes';
+import { Flow, Group, Label, Topic, Hint } from 'flowTypes';
 import * as React from 'react';
 import { createUUID, getURNPath } from 'utils';
 import i18n from 'config/i18n';
@@ -71,6 +71,9 @@ export interface EventProps {
   service?: string;
   classifier?: { uuid: string; name: string };
   ticketer?: { uuid: string; name: string };
+  ticket?: { topic: Topic; body: string };
+  hint?: Hint;
+  timeout_seconds?: number;
 }
 
 interface FlowEvent {
@@ -464,8 +467,8 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
         return null;
       case 'ticket_opened':
         return renderInfo(
-          i18n.t('simulator.ticket_opened', 'Ticket opened with subject "[[subject]]"', {
-            subject: this.props.subject
+          i18n.t('simulator.ticket_opened', 'Ticket opened with topic "[[topic]]"', {
+            topic: this.props.ticket.topic.name
           })
         );
       case 'airtime_transferred':

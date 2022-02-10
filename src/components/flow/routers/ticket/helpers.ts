@@ -7,21 +7,42 @@ import { NodeEditorSettings, FormEntry } from 'store/nodeEditor';
 import { createUUID } from 'utils';
 import { TicketRouterFormState } from 'components/flow/routers/ticket/TicketRouterForm';
 
-export const nodeToState = (settings: NodeEditorSettings): TicketRouterFormState => {
-  let ticketer: FormEntry = { value: null };
+export const getOriginalAction = (settings: NodeEditorSettings): OpenTicket => {
+  const action =
+    settings.originalAction ||
+    (settings.originalNode.node.actions.length > 0 && settings.originalNode.node.actions[0]);
+
+  if (action.type === Types.open_ticket) {
+    return action as OpenTicket;
+  }
+};
+
+export const nodeToState = (
+  settings: NodeEditorSettings,
+  initialTicketer: any
+): TicketRouterFormState => {
+  let ticketer: FormEntry = initialTicketer
+    ? { value: { uuid: initialTicketer.id, name: initialTicketer.name } }
+    : { value: null };
   let subject = { value: '@run.flow.name' };
   let body = { value: '@results' };
   let resultName = { value: 'Result' };
+  let assignee: FormEntry = { value: null };
+  let topic: FormEntry = { value: null };
 
   if (getType(settings.originalNode) === Types.split_by_ticket) {
     const action = getOriginalAction(settings) as OpenTicket;
     ticketer = { value: action.ticketer };
     subject = { value: action.subject };
     body = { value: action.body };
+    topic = { value: action.topic };
+    assignee = { value: action.assignee };
     resultName = { value: action.result_name };
   }
 
   const state: TicketRouterFormState = {
+    assignee,
+    topic,
     ticketer,
     subject,
     body,
@@ -49,20 +70,11 @@ export const stateToNode = (
       uuid: state.ticketer.value.uuid,
       name: state.ticketer.value.name
     },
-    subject: state.subject.value,
     body: state.body.value,
+    topic: state.topic.value,
+    assignee: state.assignee.value,
     result_name: state.resultName.value
   };
 
   return createWebhookBasedNode(newAction, settings.originalNode, true);
-};
-
-export const getOriginalAction = (settings: NodeEditorSettings): OpenTicket => {
-  const action =
-    settings.originalAction ||
-    (settings.originalNode.node.actions.length > 0 && settings.originalNode.node.actions[0]);
-
-  if (action.type === Types.open_ticket) {
-    return action as OpenTicket;
-  }
 };

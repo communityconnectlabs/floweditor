@@ -3,17 +3,9 @@ import axios, { AxiosResponse } from 'axios';
 import { SaveResult } from 'components/revisions/RevisionExplorer';
 import { Endpoints, Exit, FlowDefinition, SPEC_VERSION, FlowDetails } from 'flowTypes';
 import { currencies } from 'store/currencies';
-import { Activity, RecentMessage } from 'store/editor';
-import {
-  Asset,
-  AssetMap,
-  Assets,
-  AssetStore,
-  AssetType,
-  CompletionOption
-} from 'store/flowContext';
+import { Activity, RecentContact } from 'store/editor';
+import { Asset, AssetMap, Assets, AssetStore, AssetType } from 'store/flowContext';
 import { assetListToMap } from 'store/helpers';
-import { CompletionSchema } from 'utils/completion';
 import { FlowTypes } from 'config/interfaces';
 
 // Configure axios to always send JSON requests
@@ -80,18 +72,18 @@ export const getRecentMessages = (
   recentsEndpoint: string,
   exit: Exit,
   cancel: Cancel
-): Promise<RecentMessage[]> =>
-  new Promise<RecentMessage[]>((resolve, reject) => {
+): Promise<RecentContact[]> =>
+  new Promise<RecentContact[]>((resolve, reject) => {
     cancel.reject = reject;
     return axios
-      .get(`${recentsEndpoint}?exits=${exit.uuid}&to=${exit.destination_uuid}`)
+      .get(`${recentsEndpoint}${exit.uuid}/${exit.destination_uuid}/`)
       .then((response: AxiosResponse) => {
-        const recentMessages: RecentMessage[] = [];
+        const recentcontacts: RecentContact[] = [];
         for (const row of response.data) {
-          recentMessages.push({ text: row.text, sent: row.sent });
+          recentcontacts.push({ contact: row.contact, operand: row.operand, time: row.time });
         }
 
-        resolve(response.data as RecentMessage[]);
+        resolve(response.data as RecentContact[]);
       })
       .catch(error => reject(error));
   });
@@ -355,7 +347,7 @@ export const createAssetStore = (endpoints: Endpoints): Promise<AssetStore> => {
 
     // prefetch some of our assets
     const fetches: any[] = [];
-    ['languages', 'fields', 'groups', 'labels', 'globals', 'classifiers'].forEach(
+    ['languages', 'fields', 'groups', 'labels', 'globals', 'classifiers', 'ticketers'].forEach(
       (storeId: string) => {
         const store = assetStore[storeId];
         fetches.push(
@@ -370,25 +362,6 @@ export const createAssetStore = (endpoints: Endpoints): Promise<AssetStore> => {
     // wait for our prefetches to finish
     Promise.all(fetches).then((results: any) => {
       resolve(assetStore);
-    });
-  });
-};
-
-export const getFunctions = (endpoint: string): Promise<CompletionOption[]> => {
-  return new Promise<CompletionOption[]>((resolve, reject) => {
-    axios
-      .get(endpoint)
-      .then(response => {
-        resolve(response.data);
-      })
-      .catch(error => reject(error));
-  });
-};
-
-export const getCompletionSchema = (endpoint: string): Promise<CompletionSchema> => {
-  return new Promise<CompletionSchema>((resolve, reject) => {
-    axios.get(endpoint).then(response => {
-      resolve(response.data);
     });
   });
 };

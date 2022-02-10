@@ -19,8 +19,13 @@ import { Asset } from 'store/flowContext';
 import styles from './TicketRouterForm.module.scss';
 import i18n from 'config/i18n';
 import TextInputElement from 'components/form/textinput/TextInputElement';
+import TembaSelect from 'temba/TembaSelect';
+import { fakePropType } from 'config/ConfigProvider';
+import { Topic, User } from 'flowTypes';
 
 export interface TicketRouterFormState extends FormState {
+  assignee: FormEntry;
+  topic: FormEntry;
   ticketer: FormEntry;
   subject: StringEntry;
   body: StringEntry;
@@ -31,16 +36,26 @@ export default class TicketRouterForm extends React.Component<
   RouterFormProps,
   TicketRouterFormState
 > {
+  public static contextTypes = {
+    config: fakePropType
+  };
+
   constructor(props: RouterFormProps) {
     super(props);
-    this.state = nodeToState(this.props.nodeSettings);
+
+    // if we only have one ticketer, initialize our form with it
+    const ticketers = Object.values(this.props.assetStore.ticketers.items);
+    const ticketer = ticketers.length === 1 ? ticketers[0] : null;
+    this.state = nodeToState(this.props.nodeSettings, ticketer);
+
     bindCallbacks(this, {
       include: [/^handle/]
     });
   }
-
   private handleUpdate(
     keys: {
+      assignee?: User;
+      topic?: Topic;
       ticketer?: Asset;
       subject?: string;
       body?: string;
@@ -50,6 +65,18 @@ export default class TicketRouterForm extends React.Component<
   ): boolean {
     const updates: Partial<TicketRouterFormState> = {};
 
+    if (keys.hasOwnProperty('assignee')) {
+      updates.assignee = validate(i18n.t('forms.assignee', 'Assignee'), keys.assignee, [
+        shouldRequireIf(submitting)
+      ]);
+    }
+
+    if (keys.hasOwnProperty('topic')) {
+      updates.topic = validate(i18n.t('forms.topic', 'Topic'), keys.topic, [
+        shouldRequireIf(submitting)
+      ]);
+    }
+
     if (keys.hasOwnProperty('ticketer')) {
       updates.ticketer = validate(i18n.t('forms.ticketer', 'Ticketer'), keys.ticketer, [
         shouldRequireIf(submitting)
@@ -57,9 +84,7 @@ export default class TicketRouterForm extends React.Component<
     }
 
     if (keys.hasOwnProperty('subject')) {
-      updates.subject = validate(i18n.t('forms.subject', 'Subject'), keys.subject, [
-        shouldRequireIf(submitting)
-      ]);
+      updates.subject = validate(i18n.t('forms.subject', 'Subject'), keys.subject, []);
     }
 
     if (keys.hasOwnProperty('body')) {
@@ -83,6 +108,14 @@ export default class TicketRouterForm extends React.Component<
 
   private handleTicketerUpdate(selected: Asset[]): void {
     this.handleUpdate({ ticketer: selected[0] });
+  }
+
+  private handleAssigneeUpdate(assignee: User): void {
+    this.handleUpdate({ assignee });
+  }
+
+  private handleTopicUpdate(topic: Topic): void {
+    this.handleUpdate({ topic });
   }
 
   private handleSubjectUpdate(subject: string, name: string, submitting = false): boolean {
@@ -136,28 +169,62 @@ export default class TicketRouterForm extends React.Component<
   private renderEdit(): JSX.Element {
     const typeConfig = this.props.typeConfig;
 
+    // if we only have one ticketer or we have issues, show the ticket chooser
+    const showTicketers =
+      Object.keys(this.props.assetStore.ticketers.items).length > 1 || this.props.issues.length > 0;
+
     return (
       <Dialog title={typeConfig.name} headerClass={typeConfig.type} buttons={this.getButtons()}>
         <TypeList __className="" initialType={typeConfig} onChange={this.props.onTypeChange} />
-        <p>
-          <span>Open ticket via... </span>
-        </p>
-        <AssetSelector
-          key="select_ticketer"
-          name={i18n.t('forms.ticketer', 'Ticketer')}
-          placeholder="Select the ticketing service to use"
-          assets={this.props.assetStore.ticketers}
-          onChange={this.handleTicketerUpdate}
-          entry={this.state.ticketer}
-        />
-        <div className={styles.subject}>
-          <TextInputElement
-            name={i18n.t('forms.subject', 'Subject')}
-            placeholder={i18n.t('forms.enter_a_subject', 'Enter a subject')}
-            entry={this.state.subject}
-            onChange={this.handleSubjectUpdate}
-            autocomplete={true}
-          />
+        {showTicketers ? (
+          <div>
+            <p>
+              <span>Open ticket via... </span>
+            </p>
+            <AssetSelector
+              key="select_ticketer"
+              name={i18n.t('forms.ticketer', 'Ticketer')}
+              placeholder="Select the ticketing service to use"
+              assets={this.props.assetStore.ticketers}
+              onChange={this.handleTicketerUpdate}
+              entry={this.state.ticketer}
+            />
+          </div>
+        ) : (
+          ''
+        )}
+
+        <div style={{ display: 'flex', width: '100%', marginTop: '0.5em' }}>
+          <div style={{ flexBasis: 250 }}>
+            <TembaSelect
+              key="select_topic"
+              name={i18n.t('forms.topic', 'Topic')}
+              endpoint={this.context.config.endpoints.topics}
+              onChange={this.handleTopicUpdate}
+              value={this.state.topic.value}
+              createPrefix={i18n.t('forms.topic_prefix', 'Create Topic: ')}
+              searchable={true}
+            />
+          </div>
+
+          <div style={{ flexGrow: 1, marginLeft: '0.5em' }}>
+            <TembaSelect
+              key="select_assignee"
+              name={i18n.t('forms.assignee', 'Assignee')}
+              placeholder="Assign to (Optional)"
+              valueKey="email"
+              endpoint={this.context.config.endpoints.users}
+              onChange={this.handleAssigneeUpdate}
+              clearable={true}
+              value={this.state.assignee.value}
+              getName={(user: User) => {
+                if (!user.first_name && !user.last_name) {
+                  return user.email || '';
+                }
+                return `${user.first_name} ${user.last_name}`;
+              }}
+            />
+          </div>
         </div>
         <div className={styles.body}>
           <TextInputElement

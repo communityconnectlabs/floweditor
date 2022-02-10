@@ -1,8 +1,7 @@
-import { FlowPosition } from 'flowTypes';
+import { FlowPosition, Contact } from 'flowTypes';
 import ActionTypes, { UpdateEditorState } from 'store/actionTypes';
 import Constants from 'store/constants';
-import { Asset, RenderNode, CompletionOption } from 'store/flowContext';
-import { CompletionSchema } from 'utils/completion';
+import { Asset, RenderNode } from 'store/flowContext';
 
 // tslint:disable:no-shadowed-variable
 export interface DragSelection {
@@ -23,13 +22,14 @@ export interface CanvasPositions {
 export interface Activity {
   nodes: { [uuid: string]: number };
   segments: { [exitToNodeKey: string]: number };
-  recentMessages?: { [key: string]: RecentMessage[] };
+  recentContacts?: { [key: string]: RecentContact[] };
   is_starting?: boolean;
 }
 
-export interface RecentMessage {
-  sent: string;
-  text: string;
+export interface RecentContact {
+  contact: Contact;
+  operand: string;
+  time: string;
 }
 
 export interface Warning {
@@ -61,12 +61,6 @@ export interface EditorState {
 
   modalMessage?: ModalMessage;
   saving?: boolean;
-
-  // our schema for peform dot completion
-  completionSchema: CompletionSchema;
-
-  // our function list for completion
-  functions: CompletionOption[];
 
   // the currently shown activity, can be
   // simulation or live
@@ -101,8 +95,6 @@ export const EMPTY_DRAG_STATE: any = {
 
 // Initial state
 export const initialState: EditorState = {
-  completionSchema: { types: [], root: [] },
-  functions: [],
   currentRevision: null,
   simulating: false,
   translating: false,
