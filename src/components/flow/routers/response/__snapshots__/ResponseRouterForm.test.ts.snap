@@ -190,8 +190,8 @@ exports[`ResponseRouterForm initializes case config 1`] = `
         </div>,
         "checked": false,
         "hasErrors": true,
-        "name": "Testing",
-        "nameStyle": "testingTabNameError",
+        "icon": "fe-x",
+        "name": "Test Responses",
         "onClick": [Function],
       },
     ]
@@ -579,8 +579,8 @@ exports[`ResponseRouterForm should render 1`] = `
         </div>,
         "checked": true,
         "hasErrors": false,
-        "name": "Testing",
-        "nameStyle": "",
+        "icon": null,
+        "name": "Test Responses",
         "onClick": [Function],
       },
     ]
