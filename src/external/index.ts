@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import axios, { AxiosResponse } from 'axios';
 import { SaveResult } from 'components/revisions/RevisionExplorer';
-import { Endpoints, Exit, FlowDefinition, SPEC_VERSION, FlowDetails } from 'flowTypes';
+import { Endpoints, Exit, FlowDefinition, FlowDetails, SPEC_VERSION } from 'flowTypes';
 import { currencies } from 'store/currencies';
 import { Activity, RecentMessage } from 'store/editor';
 import { Asset, AssetMap, Assets, AssetStore, AssetType } from 'store/flowContext';
@@ -372,6 +372,12 @@ export const createAssetStore = (endpoints: Endpoints): Promise<AssetStore> => {
         id: 'id',
         items: currencies,
         prefetched: true
+      },
+      dialogflow: {
+        endpoint: getURL(endpoints.dialogflow),
+        type: AssetType.Dialogflow,
+        id: 'id',
+        items: {}
       }
     };
 

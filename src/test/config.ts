@@ -34,7 +34,8 @@ export const config: FlowEditorConfig = {
     simulateResume: '',
     lookups: '',
     giftcard: '',
-    link: ''
+    link: '',
+    dialogflow: ''
   },
   onChangeLanguage: (code: string, name: string) => {}
 };
