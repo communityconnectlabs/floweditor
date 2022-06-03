@@ -401,7 +401,8 @@ export const typeConfigList: Type[] = [
     form: DialogflowRouterForm,
     aliases: [Types.split_by_dialogflow],
     localizeableKeys: ['exits'],
-    component: CallDialogflowComp
+    component: CallDialogflowComp,
+    visibility: VISIBILITY_ONLINE
   },
   {
     type: Types.enter_flow,
