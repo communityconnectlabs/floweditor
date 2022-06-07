@@ -19,6 +19,7 @@ import {
   CallClassifier,
   OpenTicket,
   CallGiftcard,
+  CallDialogflow,
   TrackableLinkAction,
   VoiceCallStatusAction,
   VoiceCallStatusExitNames
@@ -343,6 +344,7 @@ export const createWebhookBasedNode = (
     | TransferAirtime
     | CallLookup
     | CallGiftcard
+    | CallDialogflow
     | TrackableLinkAction,
   originalNode: RenderNode,
   useCategoryTest: boolean

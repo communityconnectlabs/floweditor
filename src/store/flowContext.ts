@@ -61,6 +61,7 @@ export enum AssetType {
   Contact = 'contact',
   ContactProperty = 'property',
   Currency = 'currency',
+  Dialogflow = 'dialogflow',
   Environment = 'environment',
   Expression = 'expression',
   Field = 'field',

@@ -55,6 +55,7 @@ export enum Types {
   split_by_lookup = 'split_by_lookup',
   split_by_shorten_url = 'split_by_shorten_url',
   split_by_voicecall_status = 'split_by_voicecall_status',
+  split_by_dialogflow = 'split_by_dialogflow',
   wait_for_response = 'wait_for_response',
   wait_for_menu = 'wait_for_menu',
   wait_for_dial = 'wait_for_dial',
@@ -66,7 +67,8 @@ export enum Types {
   missing = 'missing',
   say_msg = 'say_msg',
   play_audio = 'play_audio',
-  voicecall_status = 'voicecall_status'
+  voicecall_status = 'voicecall_status',
+  call_dialogflow = 'call_dialogflow'
 }
 
 export enum Operators {

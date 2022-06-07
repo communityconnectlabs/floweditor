@@ -296,6 +296,20 @@ Array [
   },
   Object {
     "aliases": Array [
+      "split_by_dialogflow",
+    ],
+    "component": [Function],
+    "description": "Call Dialogflow",
+    "form": [Function],
+    "localization": [Function],
+    "localizeableKeys": Array [
+      "exits",
+    ],
+    "name": "Call Dialogflow",
+    "type": "call_dialogflow",
+  },
+  Object {
+    "aliases": Array [
       "split_by_subflow",
     ],
     "component": [Function],
@@ -557,6 +571,20 @@ Object {
       "messaging_background",
       "voice",
     ],
+  },
+  "call_dialogflow": Object {
+    "aliases": Array [
+      "split_by_dialogflow",
+    ],
+    "component": [Function],
+    "description": "Call Dialogflow",
+    "form": [Function],
+    "localization": [Function],
+    "localizeableKeys": Array [
+      "exits",
+    ],
+    "name": "Call Dialogflow",
+    "type": "call_dialogflow",
   },
   "call_giftcard": Object {
     "aliases": Array [
@@ -872,6 +900,20 @@ Object {
     ],
     "name": "Split by Contact Field",
     "type": "split_by_contact_field",
+  },
+  "split_by_dialogflow": Object {
+    "aliases": Array [
+      "split_by_dialogflow",
+    ],
+    "component": [Function],
+    "description": "Call Dialogflow",
+    "form": [Function],
+    "localization": [Function],
+    "localizeableKeys": Array [
+      "exits",
+    ],
+    "name": "Call Dialogflow",
+    "type": "call_dialogflow",
   },
   "split_by_expression": Object {
     "description": "Split by a custom expression",

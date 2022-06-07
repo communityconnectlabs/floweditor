@@ -8,6 +8,7 @@ Array [
     "attachments_validation": "/assets/validate_attachment_url.json",
     "channels": "/assets/channels.json",
     "classifiers": "/assets/classifiers.json",
+    "dialogflow": "",
     "editor": "/flow/editor",
     "environment": "/assets/environment.json",
     "fields": "/assets/fields.json",

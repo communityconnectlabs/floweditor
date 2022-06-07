@@ -71,6 +71,8 @@ import ShortenUrlComp from 'components/flow/actions/shortenurl/ShortenUrl';
 import ShortenUrlForm from 'components/flow/routers/shortenurl/ShortenUrlForm';
 import VoiceCallStatusForm from 'components/flow/routers/voicecallstatus/VoiceCallStatusForm';
 import VoiceCallStatusComp from 'components/flow/actions/voicecallstatus/VoiceCallStatus';
+import { DialogflowRouterForm } from 'components/flow/routers/dialogflow';
+import CallDialogflowComp from '../components/flow/actions/calldialogflow/CallDialogflow';
 
 const dedupeTypeConfigs = (typeConfigs: Type[]) => {
   const map: any = {};
@@ -389,6 +391,17 @@ export const typeConfigList: Type[] = [
     component: CallResthookComp,
     aliases: [Types.split_by_resthook],
     filter: FeatureFilter.HAS_RESTHOOK,
+    visibility: VISIBILITY_ONLINE
+  },
+  {
+    type: Types.call_dialogflow,
+    name: i18n.t('actions.call_dialogflow.name', 'Call Dialogflow'),
+    description: i18n.t('actions.call_dialogflow.description', 'Call Dialogflow'),
+    localization: RouterLocalizationForm,
+    form: DialogflowRouterForm,
+    aliases: [Types.split_by_dialogflow],
+    localizeableKeys: ['exits'],
+    component: CallDialogflowComp,
     visibility: VISIBILITY_ONLINE
   },
   {

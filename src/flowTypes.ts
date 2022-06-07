@@ -46,6 +46,7 @@ export interface Endpoints {
   simulateStart: string;
   simulateResume: string;
   editor: string;
+  dialogflow: string;
 }
 
 export interface FlowEditorConfig {
@@ -564,6 +565,18 @@ export interface SharingConfig {
   line: boolean;
 }
 
+export interface DialogflowDBType {
+  id: string;
+  text: string;
+}
+
+export interface CallDialogflow extends Action {
+  type: Types.call_dialogflow;
+  dialogflow_db: DialogflowDBType;
+  result_name: string;
+  question_src: string;
+}
+
 export type AnyAction =
   | Action
   | ChangeGroups
@@ -577,6 +590,7 @@ export type AnyAction =
   | CallWebhook
   | CallLookup
   | CallGiftcard
+  | CallDialogflow
   | StartFlow
   | StartSession
   | TrackableLinkAction
