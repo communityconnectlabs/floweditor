@@ -47,6 +47,7 @@ import i18n from 'config/i18n';
 import { Trans } from 'react-i18next';
 import { Attachment, renderAttachments } from './attachments';
 import { TembaSelectStyle } from '../../../../temba/TembaSelect';
+import MsgCharCounter from './CharCounter/MsgCharCounter';
 
 const FACEBOOK_ICON = require('static/images/facebook.png');
 const TELEGRAM_ICON = require('static/images/telegram.png');
@@ -767,7 +768,13 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
           focus={true}
           textarea={true}
         />
-        <temba-charcount class="sms-counter"></temba-charcount>
+        <MsgCharCounter
+          updateFn={(text: string) => {
+            this.handleUpdate({ text }, false);
+          }}
+          text={this.state.message.value}
+          endpoint={this.context.config.endpoints.replace_accented_chars}
+        />
         {renderIssues(this.props)}
       </Dialog>
     );
