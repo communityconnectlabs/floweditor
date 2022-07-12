@@ -307,6 +307,11 @@ Array [
     ],
     "name": "Call Dialogflow",
     "type": "call_dialogflow",
+    "visibility": Array [
+      "messaging",
+      "messaging_background",
+      "voice",
+    ],
   },
   Object {
     "aliases": Array [
@@ -585,6 +590,11 @@ Object {
     ],
     "name": "Call Dialogflow",
     "type": "call_dialogflow",
+    "visibility": Array [
+      "messaging",
+      "messaging_background",
+      "voice",
+    ],
   },
   "call_giftcard": Object {
     "aliases": Array [
@@ -914,6 +924,11 @@ Object {
     ],
     "name": "Call Dialogflow",
     "type": "call_dialogflow",
+    "visibility": Array [
+      "messaging",
+      "messaging_background",
+      "voice",
+    ],
   },
   "split_by_expression": Object {
     "description": "Split by a custom expression",

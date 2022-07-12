@@ -234,8 +234,9 @@ exports[`SendMsgForm render should render 1`] = `
     showLabel={false}
     textarea={true}
   />
-  <temba-charcount
-    class="sms-counter"
+  <MsgCharCounter
+    text="Hey!"
+    updateFn={[Function]}
   />
 </Dialog>
 `;
