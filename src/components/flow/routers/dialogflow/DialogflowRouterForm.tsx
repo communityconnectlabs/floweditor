@@ -84,7 +84,6 @@ class DialogflowRouterForm extends React.PureComponent<RouterFormProps, Dialogfl
   };
 
   private handleUpdateResultName(value: string): void {
-    console.log(this.state);
     const resultName = validate(i18n.t('forms.result_name', 'Result Name'), value, [
       Alphanumeric,
       StartIsNonNumeric
