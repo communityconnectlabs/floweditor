@@ -1,0 +1,37 @@
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.float_counter {
+  width: 30%;
+  float: right;
+}
+
+.counter_wrapper {
+  padding-top: 5px;
+  div {
+    padding-top: 5px;
+  }
+}
+
+.counter_high_segments {
+  color: #cf2e2c;
+}
+
+.counter_question {
+  cursor: pointer;
+  color: #4d7dad;
+}
+
+.counter_dialog {
+  width: 400px;
+  div[class^="Dialog_title"] {
+    background: #aaaaaa;
+  }
+}
+
+.accented_chars_list {
+  padding-top: 10px;
+}
