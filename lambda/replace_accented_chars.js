@@ -1,77 +1,5 @@
-const replacementMapping = {
-  à: 'a',
-  ê: 'e',
-  ã: 'a',
-  â: 'a',
-  ç: 'c',
-  í: 'i',
-  î: 'i',
-  ú: 'u',
-  û: 'u',
-  õ: 'o',
-  ô: 'o',
-  ó: 'o',
-  Á: 'A',
-  Â: 'A',
-  Ã: 'A',
-  À: 'A',
-  Ç: 'C',
-  È: 'E',
-  Ê: 'E',
-  Í: 'I',
-  Î: 'I',
-  Ì: 'I',
-  Ó: 'O',
-  Ô: 'O',
-  Ò: 'O',
-  Õ: 'O',
-  Ú: 'U',
-  Ù: 'U',
-  Û: 'U',
-  '’': "'",
-  '‘': "'",
-  '“': '"',
-  '”': '"',
-  '–': '-',
-  '\xa0': ' ',
-  '\t': ' ',
-  Δ: '',
-  '¡': '',
-  '¿': '',
-  '£': '',
-  Φ: '',
-  '¥': '',
-  è: 'e',
-  Λ: '',
-  '¤': '',
-  é: 'e',
-  Ω: '',
-  ù: 'u',
-  Π: '',
-  ì: 'i',
-  Ψ: '',
-  ò: 'o',
-  Σ: '',
-  Θ: 'O',
-  Ξ: '',
-  Ø: 'O',
-  Ä: 'A',
-  ä: 'a',
-  ø: 'o',
-  Æ: 'E',
-  Ö: 'O',
-  ö: 'o',
-  æ: 'e',
-  Ñ: 'N',
-  ñ: 'n',
-  Å: 'A',
-  ß: '',
-  Ü: 'U',
-  ü: 'u',
-  å: 'a',
-  É: 'E',
-  '§': ''
-};
+const { getOpts } = require('./utils');
+const replacementMapping = require('../src/static/UCS-2-substitutes.json');
 
 function replaceAccent(text) {
   let updated = '';
@@ -95,8 +23,6 @@ function replaceAccent(text) {
     .trim();
   return { updated, replaced, removed: Array.from(removed) };
 }
-
-const { getOpts } = require('./utils');
 
 exports.handler = (evt, ctx, cb) => {
   const requestBody = JSON.parse(evt.body);

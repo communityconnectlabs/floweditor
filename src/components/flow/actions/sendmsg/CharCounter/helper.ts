@@ -1,5 +1,6 @@
 import { StringObject } from './types';
 
+const UCS2Substitutes = require('static/UCS-2-substitutes.json');
 const GSM7_BASIC =
   '@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\x1bÆæßÉ !"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ`¿abcdefghijklmnopqrstuvwxyzäöñüà§';
 const GSM7_EXTENDED = '^{}\\[~]|€';
@@ -25,81 +26,6 @@ const isGSMText = (text: string) => {
   return true;
 };
 
-const replacementMapping: StringObject = {
-  à: 'a',
-  ê: 'e',
-  ã: 'a',
-  â: 'a',
-  ç: 'c',
-  í: 'i',
-  î: 'i',
-  ú: 'u',
-  û: 'u',
-  õ: 'o',
-  ô: 'o',
-  ó: 'o',
-  Á: 'A',
-  Â: 'A',
-  Ã: 'A',
-  À: 'A',
-  Ç: 'C',
-  È: 'E',
-  Ê: 'E',
-  Í: 'I',
-  Î: 'I',
-  Ì: 'I',
-  Ó: 'O',
-  Ô: 'O',
-  Ò: 'O',
-  Õ: 'O',
-  Ú: 'U',
-  Ù: 'U',
-  Û: 'U',
-  '’': "'",
-  '‘': "'",
-  '“': '"',
-  '”': '"',
-  '–': '-',
-  '\xa0': ' ',
-  '\t': ' ',
-  Δ: '',
-  '¡': '',
-  '¿': '',
-  '£': '',
-  Φ: '',
-  '¥': '',
-  è: 'e',
-  Λ: '',
-  '¤': '',
-  é: 'e',
-  Ω: '',
-  ù: 'u',
-  Π: '',
-  ì: 'i',
-  Ψ: '',
-  ò: 'o',
-  Σ: '',
-  Θ: 'O',
-  Ξ: '',
-  Ø: 'O',
-  Ä: 'A',
-  ä: 'a',
-  ø: 'o',
-  Æ: 'E',
-  Ö: 'O',
-  ö: 'o',
-  æ: 'e',
-  Ñ: 'N',
-  ñ: 'n',
-  Å: 'A',
-  ß: '',
-  Ü: 'U',
-  ü: 'u',
-  å: 'a',
-  É: 'E',
-  '§': ''
-};
-
 export const getMessageInfo = (text: string) => {
   const isGSM = isGSMText(text);
   let isMultipart = false;
@@ -110,7 +36,7 @@ export const getMessageInfo = (text: string) => {
     isGSM,
     isMultipart: false,
     segmentCount: 1,
-    characterSet: isGSM ? 'GSM' : 'Unicode',
+    characterSet: isGSM ? 'GSM/7-bit' : 'UCS-2',
     count: text.length
   };
 
@@ -135,7 +61,7 @@ export const getMessageInfo = (text: string) => {
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    if (replacementMapping[char] !== undefined) accentedChars.add(char);
+    if (UCS2Substitutes[char] !== undefined) accentedChars.add(char);
     if (isGSM && GSM7_EXTENDED_CHARS[char] !== undefined) {
       segmentSize += 2;
       count += 2;
