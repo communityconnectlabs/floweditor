@@ -1,6 +1,6 @@
 import { StringObject } from './types';
 
-const UCS2Substitutes = require('static/UCS-2-substitutes.json');
+const GSM7_REPLACEMENTS = require('static/gsm7-replacements.json');
 const GSM7_BASIC =
   '@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\x1bÆæßÉ !"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ`¿abcdefghijklmnopqrstuvwxyzäöñüà§';
 const GSM7_EXTENDED = '^{}\\[~]|€';
@@ -61,7 +61,7 @@ export const getMessageInfo = (text: string) => {
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    if (UCS2Substitutes[char] !== undefined) accentedChars.add(char);
+    if (GSM7_REPLACEMENTS[char] !== undefined) accentedChars.add(char);
     if (isGSM && GSM7_EXTENDED_CHARS[char] !== undefined) {
       segmentSize += 2;
       count += 2;

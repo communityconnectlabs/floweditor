@@ -1,5 +1,5 @@
 const { getOpts } = require('./utils');
-const replacementMapping = require('../src/static/UCS-2-substitutes.json');
+const GSM7_REPLACEMENTS = require('../src/static/gsm7-replacements.json');
 
 function replaceAccent(text) {
   let updated = '';
@@ -7,7 +7,7 @@ function replaceAccent(text) {
   const replaced = {};
   for (let i = 0; i < text.length; i += 1) {
     const char = text[i];
-    let replacement = replacementMapping[char];
+    let replacement = GSM7_REPLACEMENTS[char];
     replacement = replacement === undefined ? char : replacement;
     if (replacement === '') removed.add(char);
     else {
