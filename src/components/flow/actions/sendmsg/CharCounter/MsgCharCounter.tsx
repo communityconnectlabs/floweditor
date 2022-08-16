@@ -100,7 +100,7 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
             this.updateState({ openDialog: true });
           }}
         >
-          Want to save some money?
+          {i18n.t('wantToSaveMoney', 'Want to save some money?')}
         </span>
       </div>
     );
@@ -109,9 +109,12 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
   renderAccentedCharList(accentedChars: string[]) {
     return (
       <div>
-        This message is GSM encoded. GSM has only 70 characters per segment vs. 160 characters
-        characters for 7-bit. If you replace the following characters, you can get space for space
-        space for your message and likely save money.
+        {i18n.t(
+          'replaceTextMsg',
+          'This message is UCS-2 encoded. UCS-2 has only 70 characters per segment vs. 160 characters\n' +
+            'for 7-bit/GSM. If you replace the following characters, you can get more space for your\n' +
+            'message and likely save money.'
+        )}
         <div className={styles.accented_chars_list}>{accentedChars.join(', ')}</div>
       </div>
     );
@@ -120,7 +123,7 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
   renderReplacedCharsMsg() {
     return (
       <div>
-        The following characters have been replaced <br />
+        {i18n.t('replacedCharMsg', 'The following characters have been replaced')} <br />
         {Object.entries(this.state.updateMsgResult.replaced).map(([key, value]) => (
           <div key={`${key}-${value}`}>{`${key} -> ${value}`}</div>
         ))}
@@ -138,7 +141,7 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
     return (
       <Modal show={this.state.openDialog} width="400px">
         <Dialog
-          title="Replace Accented Text"
+          title={i18n.t('dialogTitle', 'Replace Accented Text')}
           className={styles.counter_dialog}
           buttons={this.getButton()}
         >
@@ -159,11 +162,11 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
           </div>
           <div>
             Encoding:{' '}
-            <span className={msg.isGSM ? styles.counter_high_segments : null}>
+            <span className={!msg.isGSM ? styles.counter_high_segments : null}>
               {msg.characterSet}
             </span>
           </div>
-          {msg.isGSM &&
+          {!msg.isGSM &&
             msg.accentedChars.length > 0 &&
             msg.segmentCount > 1 &&
             this.renderSaveOption()}
