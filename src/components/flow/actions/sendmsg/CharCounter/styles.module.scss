@@ -35,3 +35,44 @@
 .accented_chars_list {
   padding-top: 10px;
 }
+
+/* Message segment composition */
+
+.segment_part {
+  margin-top: 10px;
+}
+
+.segment_headers span,
+.gsm_chars,
+.ucs_2_chars {
+  display: inline-block;
+  width: 24px;
+  height: 31px;
+  text-align: center;
+  background-color: #eee;
+  border-radius: 3px;
+  margin: 0;
+  line-height: 30px;
+  vertical-align: top;
+  overflow: hidden;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.segment_headers span {
+  background-color: #999999;
+}
+
+.ucs_2_chars {
+  background-color: #8eba33;
+}
+
+.segment_label_count {
+  float: left;
+  width: 13%;
+}
+
+.segment_text_composition {
+  float: right;
+  width: 86%;
+}
