@@ -10,11 +10,11 @@ import {
 } from './helper';
 
 class SegmentComposition extends React.Component<SCFormProps, FormState> {
-  getMaxPerSegment(isGSM: boolean, segmentCount: number) {
+  getMaxPerSegment(isGSM: boolean, totalSegments: number) {
     let maxInSegment = GSM7_SINGLE_SEGMENT;
-    if (!isGSM && segmentCount === 1) maxInSegment = UCS2_SINGLE_SEGMENT;
-    if (!isGSM && segmentCount > 1) maxInSegment = UCS2_MULTI_SEGMENTS;
-    if (isGSM && segmentCount > 1) maxInSegment = GSM7_MULTI_SEGMENTS;
+    if (!isGSM && totalSegments === 1) maxInSegment = UCS2_SINGLE_SEGMENT;
+    if (!isGSM && totalSegments > 1) maxInSegment = UCS2_MULTI_SEGMENTS;
+    if (isGSM && totalSegments > 1) maxInSegment = GSM7_MULTI_SEGMENTS;
 
     return maxInSegment;
   }
@@ -39,12 +39,12 @@ class SegmentComposition extends React.Component<SCFormProps, FormState> {
     );
   }
 
-  createSegment(compositions: JSX.Element[], segmentCount: number, sCount: number) {
+  createSegment(compositions: JSX.Element[], totalSegments: number, sCount: number) {
     return (
       <div key={`segment-part-${sCount}`} className={`${styles.clearfix} ${styles.segment_part}`}>
         <div className={styles.segment_label_count}>Segment {sCount}</div>
         <div className={styles.segment_text_composition}>
-          {segmentCount > 1 && this.segmentHeader(sCount)}
+          {totalSegments > 1 && this.segmentHeader(sCount)}
           {compositions}
         </div>
       </div>
@@ -59,7 +59,7 @@ class SegmentComposition extends React.Component<SCFormProps, FormState> {
     );
   }
 
-  getMsgCompositions(text: string, maxInSegment: number, segmentCount: number, isGSM: boolean) {
+  getMsgCompositions(text: string, maxInSegment: number, totalSegments: number, isGSM: boolean) {
     let compositions: JSX.Element[] = [];
     let charCounter = 0;
     const segments = [];
@@ -72,7 +72,7 @@ class SegmentComposition extends React.Component<SCFormProps, FormState> {
 
       if (charCounter > maxInSegment) {
         charCounter -= maxInSegment;
-        segments.push(this.createSegment(compositions, segmentCount, sCount));
+        segments.push(this.createSegment(compositions, totalSegments, sCount));
         compositions = [];
         sCount += 1;
       }
@@ -84,18 +84,18 @@ class SegmentComposition extends React.Component<SCFormProps, FormState> {
       // add to final segment if text exist and less than maxInSegment
       compositions.push(this.formatChar(char, i, isGSM));
       if (i === text.length - 1 && compositions.length > 0)
-        segments.push(this.createSegment(compositions, segmentCount, sCount));
+        segments.push(this.createSegment(compositions, totalSegments, sCount));
     }
 
     return segments;
   }
 
   render() {
-    const { segmentCount, text, isGSM } = this.props;
-    const maxInSegment = this.getMaxPerSegment(isGSM, segmentCount);
+    const { totalSegments, text, isGSM } = this.props;
+    const maxInSegment = this.getMaxPerSegment(isGSM, totalSegments);
     return (
       <div className={styles.segment_part_composition}>
-        {this.getMsgCompositions(text, maxInSegment, segmentCount, isGSM)}
+        {this.getMsgCompositions(text, maxInSegment, totalSegments, isGSM)}
       </div>
     );
   }

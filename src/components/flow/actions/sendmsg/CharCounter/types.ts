@@ -28,6 +28,6 @@ export interface FormState {
 
 export interface SCFormProps {
   text: string;
-  segmentCount?: number;
+  totalSegments?: number;
   isGSM?: boolean;
 }
