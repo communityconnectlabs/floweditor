@@ -43,8 +43,9 @@
 }
 
 .segment_headers span,
-.gsm_chars,
-.ucs_2_chars {
+.gsm_mode,
+.ucs_2_mode,
+.gsm7_extended_char {
   display: inline-block;
   width: 24px;
   height: 31px;
@@ -63,7 +64,7 @@
   background-color: #999999;
 }
 
-.ucs_2_chars {
+.ucs_2_mode {
   background-color: #8eba33;
 }
 
@@ -75,4 +76,14 @@
 .segment_text_composition {
   float: right;
   width: 86%;
+}
+
+.gsm7_extended_char {
+  background-color: #fea;
+  font-size: 10px;
+}
+
+.segment_part_composition {
+  max-height: 40vh;
+  overflow-y: auto;
 }
