@@ -3,7 +3,7 @@ import { StringObject } from './types';
 const GSM7_REPLACEMENTS = require('static/gsm7-replacements.json');
 const GSM7_BASIC =
   '@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\x1bÆæßÉ !"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ`¿abcdefghijklmnopqrstuvwxyzäöñüà§';
-const GSM7_EXTENDED = '^{}\\[~]|€';
+export const GSM7_EXTENDED = '^{}\\[~]|€';
 
 const GSM7_BASIC_CHARS: StringObject = GSM7_BASIC.split('').reduce(
   (acc, key) => ({ ...acc, [key]: key }),
