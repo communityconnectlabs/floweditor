@@ -26,6 +26,11 @@ const isGSMText = (text: string) => {
   return true;
 };
 
+export const GSM7_SINGLE_SEGMENT = 160;
+export const GSM7_MULTI_SEGMENTS = 153;
+export const UCS2_SINGLE_SEGMENT = 70;
+export const UCS2_MULTI_SEGMENTS = 67;
+
 export const getMessageInfo = (text: string) => {
   const isGSM = isGSMText(text);
   let isMultipart = false;
@@ -45,7 +50,10 @@ export const getMessageInfo = (text: string) => {
     if (isGSM && GSM7_EXTENDED_CHARS[char] !== undefined) segmentSize += 2;
     else segmentSize += 1;
 
-    if ((!isGSM && segmentSize > 70) || (isGSM && segmentSize > 160)) {
+    if (
+      (!isGSM && segmentSize > UCS2_SINGLE_SEGMENT) ||
+      (isGSM && segmentSize > GSM7_SINGLE_SEGMENT)
+    ) {
       isMultipart = true;
       break;
     }
@@ -70,12 +78,12 @@ export const getMessageInfo = (text: string) => {
       count += 1;
     }
 
-    if (isGSM && segmentSize > 153) {
-      segmentSize -= 153;
+    if (isGSM && segmentSize > GSM7_MULTI_SEGMENTS) {
+      segmentSize -= GSM7_MULTI_SEGMENTS;
       segmentCount++;
     }
-    if (!isGSM && segmentSize > 67) {
-      segmentSize -= 67;
+    if (!isGSM && segmentSize > UCS2_MULTI_SEGMENTS) {
+      segmentSize -= UCS2_MULTI_SEGMENTS;
       segmentCount++;
     }
   }
