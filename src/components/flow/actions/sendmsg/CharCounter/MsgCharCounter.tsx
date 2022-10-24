@@ -177,7 +177,7 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
         </div>
         <SegmentComposition
           text={this.props.text}
-          segmentCount={msg.segmentCount}
+          totalSegments={msg.segmentCount}
           isGSM={msg.isGSM}
         />
       </div>
