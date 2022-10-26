@@ -9,6 +9,7 @@ import Dialog, { ButtonSet } from 'components/dialog/Dialog';
 import styles from './styles.module.scss';
 import { getMessageInfo } from './helper';
 import { FormProps, FormState } from './types';
+import SegmentComposition from './SegmentComposition';
 
 class MsgCharCounter extends React.Component<FormProps, FormState> {
   endpoint: string;
@@ -155,23 +156,30 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
   render() {
     const msg = getMessageInfo(this.props.text);
     return (
-      <div className={`${styles.clearfix} ${styles.counter_wrapper}`}>
-        <div className={styles.float_counter}>
-          <div className={msg.segmentCount > 1 ? styles.counter_high_segments : null}>
-            {msg.count} characters / {msg.segmentCount} segments
+      <div>
+        <div className={`${styles.clearfix} ${styles.counter_wrapper}`}>
+          <div className={styles.float_counter}>
+            <div className={msg.segmentCount > 1 ? styles.counter_high_segments : null}>
+              {msg.count} characters / {msg.segmentCount} segments
+            </div>
+            <div>
+              Encoding:{' '}
+              <span className={!msg.isGSM ? styles.counter_high_segments : null}>
+                {msg.characterSet}
+              </span>
+            </div>
+            {!msg.isGSM &&
+              msg.accentedChars.length > 0 &&
+              msg.segmentCount > 1 &&
+              this.renderSaveOption()}
           </div>
-          <div>
-            Encoding:{' '}
-            <span className={!msg.isGSM ? styles.counter_high_segments : null}>
-              {msg.characterSet}
-            </span>
-          </div>
-          {!msg.isGSM &&
-            msg.accentedChars.length > 0 &&
-            msg.segmentCount > 1 &&
-            this.renderSaveOption()}
+          {this.state.openDialog && this.renderModal(msg.accentedChars)}
         </div>
-        {this.state.openDialog && this.renderModal(msg.accentedChars)}
+        <SegmentComposition
+          text={this.props.text}
+          totalSegments={msg.segmentCount}
+          isGSM={msg.isGSM}
+        />
       </div>
     );
   }

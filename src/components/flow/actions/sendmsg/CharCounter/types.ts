@@ -25,3 +25,9 @@ export interface FormState {
   buttonText: string;
   replacing: boolean;
 }
+
+export interface SCFormProps {
+  text: string;
+  totalSegments?: number;
+  isGSM?: boolean;
+}
