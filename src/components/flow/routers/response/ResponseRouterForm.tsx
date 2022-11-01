@@ -89,9 +89,11 @@ export default class ResponseRouterForm extends React.Component<
       Alphanumeric,
       StartIsNonNumeric
     ]);
+
+    const invalidCase = !!this.state.cases.find((caseProps: CaseProps) => !caseProps.valid);
     this.setState({
       resultName,
-      valid: this.state.valid && !hasErrors(resultName)
+      valid: !invalidCase && !hasErrors(resultName)
     });
   }
 
@@ -106,7 +108,8 @@ export default class ResponseRouterForm extends React.Component<
       return localizedCases;
     };
     const localizedCases = this.state.testingLangs.reduce(recreateLocalizedCases, {});
-    this.setState({ cases, localizedCases, valid: !invalidCase });
+    const nameErrors = hasErrors(this.state.resultName);
+    this.setState({ cases, localizedCases, valid: !invalidCase && !nameErrors });
     this.retestAutomatedTestCases();
   }
 

@@ -532,7 +532,7 @@
       "title": "Email Details"
     },
     "session_triggered": "Started somebody else in \"[[flow]]\"",
-    "ticket_opened": "Ticket opened with subject \"[[subject]]\""
+    "ticket_opened": "Ticket opened with topic \"[[topic]]\""
   },
   "spell_checker": {
     "main_description": "This feature will automatically correct typos and misspellings by users in multiple languages. The language for the spell checker is based on the language set for the user. Corrections occur before the categorization rules. For example, if user types “thankks” it would be corrected to “thanks.” The word “thanks” would then be used for the categorization. The corrected text is available as a flow variable with @results.variable.corrected",

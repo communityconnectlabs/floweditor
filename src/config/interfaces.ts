@@ -114,6 +114,7 @@ export enum FeatureFilter {
   HAS_CLASSIFIER = 'classifier',
   HAS_TICKETER = 'ticketer',
   HAS_FACEBOOK = 'facebook',
+  HAS_LOCATIONS = 'locations',
   HAS_MACHINE_DETECTION = 'machine_detection'
 }
 

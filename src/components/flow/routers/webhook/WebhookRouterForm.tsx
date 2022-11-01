@@ -19,7 +19,6 @@ import * as React from 'react';
 import { FormEntry, FormState, mergeForm, StringEntry, ValidationFailure } from 'store/nodeEditor';
 import {
   Alphanumeric,
-  Required,
   shouldRequireIf,
   StartIsNonNumeric,
   validate,
@@ -123,7 +122,9 @@ export default class WebhookRouterForm extends React.Component<
 
     if (keys.hasOwnProperty('resultName')) {
       updates.resultName = validate(i18n.t('forms.result_name', 'Result Name'), keys.resultName, [
-        shouldRequireIf(submitting)
+        shouldRequireIf(submitting),
+        Alphanumeric,
+        StartIsNonNumeric
       ]);
     }
 
@@ -163,17 +164,8 @@ export default class WebhookRouterForm extends React.Component<
     return updated.valid;
   }
 
-  private handleUpdateResultName(value: string): void {
-    const updates: Partial<WebhookRouterFormState> = {
-      resultName: validate(i18n.t('forms.result_name', 'Result Name'), value, [
-        Required,
-        Alphanumeric,
-        StartIsNonNumeric
-      ])
-    };
-
-    const updated = mergeForm(this.state, updates);
-    this.setState(updated);
+  private handleUpdateResultName(value: string): boolean {
+    return this.handleUpdate({ resultName: value });
   }
 
   private handleMethodUpdate(method: MethodOption): boolean {
