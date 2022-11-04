@@ -429,7 +429,10 @@ export const getFlowDetails = (revisions: Assets, id: string = null): Promise<Fl
         axios
           .get(url)
           .then((response: AxiosResponse) => {
-            const details = response.data as FlowDetails;
+            const details =
+              typeof response.data === 'string'
+                ? (JSON.parse(response.data) as FlowDetails)
+                : (response.data as FlowDetails);
             return resolve(details);
           })
           .catch(error => reject(error));
