@@ -12760,8 +12760,8 @@
     "substitute": "\""
   },
   "0009": {
-    "char": "",
-    "substitute": ""
+    "char": "\t",
+    "substitute": " "
   },
   "FF02": {
     "char": "\"",
@@ -13258,5 +13258,177 @@
   "203C": {
     "char": "!!",
     "substitute": "!!"
+  },
+  "0031": {
+    "char": "1⁄2",
+    "substitute": "1/2"
+  },
+  "0033": {
+    "char": "3⁄4",
+    "substitute": "3/4"
+  },
+  "0021": {
+    "char": "!!",
+    "substitute": "!!"
+  },
+  "002E": {
+    "char": "...",
+    "substitute": "..."
+  },
+  "005C": {
+    "char": "\\xa0",
+    "substitute": " "
+  },
+  "00A1": {
+    "char": "¡",
+    "substitute": ""
+  },
+  "00A3": {
+    "char": "£",
+    "substitute": ""
+  },
+  "00A4": {
+    "char": "¤",
+    "substitute": ""
+  },
+  "00A5": {
+    "char": "¥",
+    "substitute": ""
+  },
+  "00A7": {
+    "char": "§",
+    "substitute": ""
+  },
+  "00BF": {
+    "char": "¿",
+    "substitute": ""
+  },
+  "00C4": {
+    "char": "Ä",
+    "substitute": "A"
+  },
+  "00C5": {
+    "char": "Å",
+    "substitute": "A"
+  },
+  "00C6": {
+    "char": "Æ",
+    "substitute": "E"
+  },
+  "00C7": {
+    "char": "Ç",
+    "substitute": "C"
+  },
+  "00C9": {
+    "char": "É",
+    "substitute": "E"
+  },
+  "00D1": {
+    "char": "Ñ",
+    "substitute": "N"
+  },
+  "00D6": {
+    "char": "Ö",
+    "substitute": "O"
+  },
+  "00D8": {
+    "char": "Ø",
+    "substitute": "O"
+  },
+  "00DC": {
+    "char": "Ü",
+    "substitute": "U"
+  },
+  "00DF": {
+    "char": "ß",
+    "substitute": ""
+  },
+  "00E0": {
+    "char": "à",
+    "substitute": "a"
+  },
+  "00E4": {
+    "char": "ä",
+    "substitute": "a"
+  },
+  "00E5": {
+    "char": "å",
+    "substitute": "a"
+  },
+  "00E6": {
+    "char": "æ",
+    "substitute": "e"
+  },
+  "00E8": {
+    "char": "è",
+    "substitute": "e"
+  },
+  "00E9": {
+    "char": "é",
+    "substitute": "e"
+  },
+  "00EC": {
+    "char": "ì",
+    "substitute": "i"
+  },
+  "00F1": {
+    "char": "ñ",
+    "substitute": "n"
+  },
+  "00F2": {
+    "char": "ò",
+    "substitute": "o"
+  },
+  "00F6": {
+    "char": "ö",
+    "substitute": "o"
+  },
+  "00F8": {
+    "char": "ø",
+    "substitute": "o"
+  },
+  "00F9": {
+    "char": "ù",
+    "substitute": "u"
+  },
+  "00FC": {
+    "char": "ü",
+    "substitute": "u"
+  },
+  "0394": {
+    "char": "Δ",
+    "substitute": ""
+  },
+  "0398": {
+    "char": "Θ",
+    "substitute": "O"
+  },
+  "039B": {
+    "char": "Λ",
+    "substitute": ""
+  },
+  "039E": {
+    "char": "Ξ",
+    "substitute": ""
+  },
+  "03A0": {
+    "char": "Π",
+    "substitute": ""
+  },
+  "03A3": {
+    "char": "Σ",
+    "substitute": ""
+  },
+  "03A6": {
+    "char": "Φ",
+    "substitute": ""
+  },
+  "03A8": {
+    "char": "Ψ",
+    "substitute": ""
+  },
+  "03A9": {
+    "char": "Ω",
+    "substitute": ""
   }
 }
