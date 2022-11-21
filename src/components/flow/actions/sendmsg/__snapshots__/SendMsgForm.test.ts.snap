@@ -236,6 +236,7 @@ exports[`SendMsgForm render should render 1`] = `
   />
   <MsgCharCounter
     text="Hey!"
+    translation={false}
     updateFn={[Function]}
   />
 </Dialog>

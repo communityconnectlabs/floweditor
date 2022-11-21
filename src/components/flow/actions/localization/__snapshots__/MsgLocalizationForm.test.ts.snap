@@ -133,6 +133,11 @@ exports[`MsgLocalizationForm inits inits with initial values 1`] = `
     showLabel={false}
     textarea={true}
   />
+  <MsgCharCounter
+    text="¡hola!"
+    translation={true}
+    updateFn={[Function]}
+  />
 </Dialog>
 `;
 
@@ -268,6 +273,11 @@ exports[`MsgLocalizationForm render should render 1`] = `
     placeholder="Spanish Translation"
     showLabel={false}
     textarea={true}
+  />
+  <MsgCharCounter
+    text=""
+    translation={true}
+    updateFn={[Function]}
   />
 </Dialog>
 `;
