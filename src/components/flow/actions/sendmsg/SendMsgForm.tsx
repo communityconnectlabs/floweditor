@@ -774,6 +774,7 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
           }}
           text={this.state.message.value}
           endpoint={this.context.config.endpoints.replace_accented_chars}
+          translation={false}
         />
         {renderIssues(this.props)}
       </Dialog>

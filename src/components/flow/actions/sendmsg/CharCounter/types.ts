@@ -10,6 +10,7 @@ export interface FormProps {
   text: string;
   updateFn: (text: string) => void;
   endpoint: string;
+  translation: boolean;
 }
 
 export interface MsgInfoProps {
