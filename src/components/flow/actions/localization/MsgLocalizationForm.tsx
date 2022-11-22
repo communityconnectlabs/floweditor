@@ -25,6 +25,7 @@ import Loading from '../../../loading/Loading';
 import HelpIcon from '../../../helpicon/HelpIcon';
 import variables from '../../../../variables.module.scss';
 import { getCookie } from '../../../../external';
+import MsgCharCounter from '../sendmsg/CharCounter/MsgCharCounter';
 
 export interface MsgLocalizationFormState extends FormState {
   message: StringEntry;
@@ -401,6 +402,7 @@ export default class MsgLocalizationForm extends React.Component<
                 focus={true}
                 textarea={true}
               />
+              <MsgCharCounter text={this.state.message.value} isTranslation />
             </div>
             <div className={styles.translate_to_item}>
               <label className={styles.translation_label}>
@@ -431,16 +433,19 @@ export default class MsgLocalizationForm extends React.Component<
               </p>
             </div>
           </div>,
-          <TextInputElement
-            name={i18n.t('forms.message', 'Message')}
-            showLabel={false}
-            onChange={this.handleMessageUpdate}
-            entry={this.state.message}
-            placeholder={`${this.props.language.name} ${translation}`}
-            autocomplete={true}
-            focus={true}
-            textarea={true}
-          />
+          <>
+            <TextInputElement
+              name={i18n.t('forms.message', 'Message')}
+              showLabel={false}
+              onChange={this.handleMessageUpdate}
+              entry={this.state.message}
+              placeholder={`${this.props.language.name} ${translation}`}
+              autocomplete={true}
+              focus={true}
+              textarea={true}
+            />
+            <MsgCharCounter text={this.state.message.value} isTranslation />
+          </>
         )}
 
         {audioButton}

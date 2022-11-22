@@ -169,6 +169,7 @@ class MsgCharCounter extends React.Component<FormProps, FormState> {
               </span>
             </div>
             {!msg.isGSM &&
+              !this.props.isTranslation &&
               msg.accentedChars.length > 0 &&
               msg.segmentCount > 1 &&
               this.renderSaveOption()}

@@ -235,6 +235,7 @@ exports[`SendMsgForm render should render 1`] = `
     textarea={true}
   />
   <MsgCharCounter
+    isTranslation={false}
     text="Hey!"
     updateFn={[Function]}
   />
