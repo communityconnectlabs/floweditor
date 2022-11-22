@@ -8,9 +8,9 @@ export interface StringObject {
 
 export interface FormProps {
   text: string;
-  updateFn: (text: string) => void;
-  endpoint: string;
-  translation: boolean;
+  updateFn?: (text: string) => void;
+  endpoint?: string;
+  isTranslation: boolean;
 }
 
 export interface MsgInfoProps {

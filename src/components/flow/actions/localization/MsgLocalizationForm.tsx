@@ -402,14 +402,7 @@ export default class MsgLocalizationForm extends React.Component<
                 focus={true}
                 textarea={true}
               />
-              <MsgCharCounter
-                updateFn={(text: string) => {
-                  this.handleUpdate({ text });
-                }}
-                text={this.state.message.value}
-                endpoint={this.context.config.endpoints.replace_accented_chars}
-                translation
-              />
+              <MsgCharCounter text={this.state.message.value} isTranslation />
             </div>
             <div className={styles.translate_to_item}>
               <label className={styles.translation_label}>
@@ -451,14 +444,7 @@ export default class MsgLocalizationForm extends React.Component<
               focus={true}
               textarea={true}
             />
-            <MsgCharCounter
-              updateFn={(text: string) => {
-                this.handleUpdate({ text });
-              }}
-              text={this.state.message.value}
-              endpoint={this.context.config.endpoints.replace_accented_chars}
-              translation
-            />
+            <MsgCharCounter text={this.state.message.value} isTranslation />
           </>
         )}
 
