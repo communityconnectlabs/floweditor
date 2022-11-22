@@ -15,6 +15,13 @@ const GSM7_EXTENDED_CHARS: StringObject = GSM7_EXTENDED.split('').reduce(
 );
 const GSM7_CHARS: StringObject = { ...GSM7_BASIC_CHARS, ...GSM7_EXTENDED_CHARS };
 
+const getHexFromChar = (char: string | number) =>
+  String(char)
+    .charCodeAt(0)
+    .toString(16)
+    .padStart(4, '0')
+    .toUpperCase();
+
 const isGSMText = (text: string) => {
   const textList = text.split('');
   let i = textList.length;
@@ -69,7 +76,8 @@ export const getMessageInfo = (text: string) => {
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    if (GSM7_REPLACEMENTS[char] !== undefined) accentedChars.add(char);
+    const charHex = getHexFromChar(char);
+    if (GSM7_REPLACEMENTS[charHex] !== undefined) accentedChars.add(char);
     if (isGSM && GSM7_EXTENDED_CHARS[char] !== undefined) {
       segmentSize += 2;
       count += 2;
