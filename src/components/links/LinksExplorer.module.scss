@@ -33,10 +33,33 @@
       color: $text_color;
       padding: 11px 10px;
       font-size: 11px;
+      display: flex;
 
       &:hover {
         background: $light_gray_2;
         cursor: pointer;
+      }
+
+      .status_code {
+        margin-left: auto;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        color: $text_color;
+
+        &.success {
+          color: $link_color;
+          &:hover {
+            text-shadow: $link_color 1px 0 10px;
+          }
+        }
+
+        &.error {
+          color: $error_color;
+          &:hover {
+            text-shadow: $error_color 1px 0 10px;
+          }
+        }
       }
     }
   }

@@ -49,6 +49,7 @@ export interface Endpoints {
   simulateResume: string;
   editor: string;
   dialogflow: string;
+  links: string;
 }
 
 export interface FlowEditorConfig {

@@ -10,6 +10,7 @@ import Loading from 'components/loading/Loading';
 import Modal from 'components/modal/Modal';
 import { RevisionExplorer } from 'components/revisions/RevisionExplorer';
 import { IssuesTab, IssueDetail } from 'components/issues/IssuesTab';
+import { LinksExplorer } from 'components/links/LinksExplorer';
 import ConfigProvider from 'config';
 import { fakePropType } from 'config/ConfigProvider';
 import { FlowDefinition, FlowEditorConfig, AnyAction } from 'flowTypes';
@@ -42,7 +43,6 @@ import { ACTIVITY_INTERVAL, downloadJSON, renderIf, onNextRender } from 'utils';
 import { PopTabType } from 'config/interfaces';
 import { TranslatorTab, TranslationBundle } from './translator/TranslatorTab';
 import i18n from 'config/i18n';
-import { LinksExplorer } from './links/LinksExplorer';
 
 const { default: PageVisibility } = require('react-page-visibility');
 
@@ -349,8 +349,7 @@ export class FlowEditor extends React.Component<FlowEditorStoreProps> {
 
             {renderIf(!!this.props.definition)(
               <LinksExplorer
-                assetStore={this.props.assetStore}
-                definition={this.props.definition}
+                linksUrl={this.context.config.endpoints.links}
                 onToggled={this.handleTabPopped}
                 onLinkClicked={this.handleScrollToNode}
                 popped={this.props.popped}

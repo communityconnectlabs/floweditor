@@ -8,10 +8,9 @@ import styles from './LinksExplorer.module.scss';
 import i18n from 'config/i18n';
 import { PopTabType } from 'config/interfaces';
 import { AssetStore } from '../../store/flowContext';
-import dateFormat from 'dateformat';
 import { renderIf } from '../../utils';
 import Loading from '../loading/Loading';
-import mutate from 'immutability-helper';
+import dateFormat from 'dateformat';
 
 const cx: any = classNames.bind(styles);
 
@@ -21,20 +20,19 @@ export interface User {
 }
 
 export interface LinkData {
-  nodeUUID: string;
-  actionUUID: string;
+  node_uuid: string;
+  action_uuid: string;
   link: string;
   error?: string;
-  statusCode?: number;
+  status_code?: number;
   processing?: boolean;
 }
 
 export interface LinksExplorerProps {
   utc?: boolean;
   popped: string;
+  linksUrl: string;
   position: string;
-  assetStore: AssetStore;
-  definition: FlowDefinition;
   onToggled: (visible: boolean, tab: PopTabType) => void;
   onLinkClicked: (node_uuid: string, action_uuid: string) => void;
   loadFlowDefinition: (details: FlowDetails, assetStore: AssetStore) => void;
@@ -44,7 +42,7 @@ export interface LinksExplorerState {
   definition: FlowDefinition;
   visible: boolean;
   links: Array<LinkData>;
-  lastRun?: string;
+  lastRun?: string | Date;
 }
 
 export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExplorerState> {
@@ -54,8 +52,8 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
     this.state = {
       definition: null,
       visible: false,
-      links: this.parseLinks(this.props.definition),
-      lastRun: dateFormat(new Date(), 'mmmm d, yyyy, h:MM TT', this.props.utc)
+      links: [],
+      lastRun: new Date()
     };
 
     bindCallbacks(this, {
@@ -64,70 +62,11 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
   }
 
   public componentDidMount() {
-    this.validateLinks();
-  }
-
-  private detectURLs(text: string) {
-    let urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
-    return text.match(urlRegex);
-  }
-
-  private parseLinks(definition?: FlowDefinition) {
-    let links = Array<LinkData>();
-    try {
-      definition.nodes.forEach(node => {
-        node.actions.forEach(action => {
-          if (action.type === 'send_msg') {
-            // @ts-ignore
-            this.detectURLs(action.text || '').forEach(textLink => {
-              links.push({
-                nodeUUID: node.uuid,
-                actionUUID: action.uuid,
-                link: textLink
-              });
-            });
-          }
-        });
+    fetch(this.props.linksUrl)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ links: data.links });
       });
-    } catch (e) {}
-    return links;
-  }
-
-  private validateLinks() {
-    this.state.links.forEach((link, index) => {
-      let updated: any = mutate(this.state.links, {
-        [index]: {
-          $merge: { processing: true }
-        }
-      });
-      this.setState({ links: updated });
-      fetch(link.link, { method: 'GET', mode: 'no-cors', redirect: 'follow' })
-        .then(response => {
-          let updated: any = mutate(this.state.links, {
-            [index]: {
-              $merge: {
-                processing: false,
-                statusCode: response.statusText,
-                error: response.status >= 400 ? response.statusText : ''
-              }
-            }
-          });
-          this.setState({ links: updated });
-          console.log(updated);
-        })
-        .catch(error => {
-          let updated: any = mutate(this.state.links, {
-            [index]: {
-              $merge: {
-                processing: false,
-                statusCode: 400,
-                error: error.toString()
-              }
-            }
-          });
-          this.setState({ links: updated });
-        });
-    });
   }
 
   public handleTabClicked(): void {
@@ -168,13 +107,21 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
                     className={styles.link}
                     key={key}
                     onClick={() => {
-                      this.props.onLinkClicked(link.nodeUUID, link.actionUUID);
+                      this.props.onLinkClicked(link.node_uuid, link.action_uuid);
                     }}
                   >
                     {link.link}
-                    {renderIf(!!link.statusCode)(
-                      <a href={link.link} className={styles.status_code}>
-                        {link.statusCode}
+                    {renderIf(!!link.status_code)(
+                      <a
+                        href={link.link}
+                        target="_blank"
+                        className={
+                          styles.status_code +
+                          ' ' +
+                          (link.status_code >= 400 ? styles.error : styles.success)
+                        }
+                      >
+                        {link.status_code}
                       </a>
                     )}
                     {renderIf(!!link.processing)(<Loading size={3} units={3} color={'#289f9b'} />)}
@@ -182,10 +129,14 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
                 );
               })}
             </div>
-            {/*<div className={styles.buttons}>*/}
-            {/*  <div className={styles.last_updated}>Last run: {this.state.lastRun}</div>*/}
-            {/*  <button className={styles.validate} onClick={() => {}}>{"Validate"}</button>*/}
-            {/*</div>*/}
+            <div className={styles.buttons}>
+              <div className={styles.last_updated}>
+                Last run: {dateFormat(this.state.lastRun, 'mmmm d, yyyy, h:MM TT', this.props.utc)}
+              </div>
+              <button className={styles.validate} onClick={() => {}}>
+                {'Validate Links'}
+              </button>
+            </div>
           </div>
         </PopTab>
       </div>
