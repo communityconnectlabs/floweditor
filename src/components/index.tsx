@@ -42,6 +42,7 @@ import { ACTIVITY_INTERVAL, downloadJSON, renderIf, onNextRender } from 'utils';
 import { PopTabType } from 'config/interfaces';
 import { TranslatorTab, TranslationBundle } from './translator/TranslatorTab';
 import i18n from 'config/i18n';
+import { LinksExplorer } from './links/LinksExplorer';
 
 const { default: PageVisibility } = require('react-page-visibility');
 
@@ -345,6 +346,31 @@ export class FlowEditor extends React.Component<FlowEditorStoreProps> {
                 popped={this.props.popped}
               />
             )}
+
+            {renderIf(!!this.props.definition)(
+              <LinksExplorer
+                assetStore={this.props.assetStore}
+                definition={this.props.definition}
+                onToggled={this.handleTabPopped}
+                onLinkClicked={this.handleScrollToNode}
+                popped={this.props.popped}
+                position={
+                  [
+                    ['416px', Object.keys(this.props.issues).length <= 0],
+                    [
+                      '471px',
+                      this.props.definition &&
+                        this.props.translating &&
+                        !this.props.fetchingFlow &&
+                        this.context.config.mutable
+                    ],
+                    ['526px', true]
+                  ].find(el => Boolean(el[1]))[0]
+                }
+                loadFlowDefinition={this.props.loadFlowDefinition}
+              />
+            )}
+
             <div id="portal-root" />
             <div id="canvas-portal" />
           </div>

@@ -1,6 +1,7 @@
 import { RevisionExplorer, RevisionExplorerProps } from 'components/revisions/RevisionExplorer';
 import { AssetType } from 'store/flowContext';
 import { composeComponentTestUtils } from 'testUtils';
+import { PopTabType } from '../../config/interfaces';
 
 const baseProps: RevisionExplorerProps = {
   assetStore: {
@@ -18,8 +19,10 @@ const baseProps: RevisionExplorerProps = {
   },
   createNewRevision: jest.fn(),
   loadFlowDefinition: jest.fn(),
+  onToggled: jest.fn(),
   utc: true,
-  simulating: false
+  mutable: true,
+  popped: PopTabType.REVISION_HISTORY
 };
 
 const { setup } = composeComponentTestUtils(RevisionExplorer, baseProps);

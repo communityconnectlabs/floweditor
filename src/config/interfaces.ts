@@ -127,7 +127,8 @@ export enum PopTabType {
   SIMULATOR = 'Simulator',
   REVISION_HISTORY = 'Revision History',
   ISSUES_TAB = 'Issues Tab',
-  TRANSLATOR_TAB = 'Translator Tab'
+  TRANSLATOR_TAB = 'Translator Tab',
+  LINKS_TAB = 'Links Tab'
 }
 
 export interface Type extends FlowTypeVisibility {
