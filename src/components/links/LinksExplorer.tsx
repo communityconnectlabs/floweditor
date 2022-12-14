@@ -43,6 +43,7 @@ export interface LinksExplorerState {
   visible: boolean;
   links: Array<LinkData>;
   lastRun?: string | Date;
+  processing?: boolean;
 }
 
 export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExplorerState> {
@@ -53,6 +54,7 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
       definition: null,
       visible: false,
       links: [],
+      processing: true,
       lastRun: new Date()
     };
 
@@ -62,11 +64,7 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
   }
 
   public componentDidMount() {
-    fetch(this.props.linksUrl)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ links: data.links });
-      });
+    this.loadValidatedLinks(false);
   }
 
   public handleTabClicked(): void {
@@ -78,6 +76,34 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
       },
       () => {}
     );
+  }
+
+  private loadValidatedLinks(refresh: boolean) {
+    let linksUrl = this.props.linksUrl;
+    if (refresh) {
+      linksUrl += '&refresh=true';
+      this.setState({ links: [], processing: true });
+    }
+    fetch(linksUrl)
+      .then(response => response.json())
+      .then(data => {
+        if (data.validating) {
+          setTimeout(this.loadValidatedLinks.bind(this), data.refresh_timeout);
+        } else {
+          this.setState({
+            links: data.links,
+            lastRun: data.processed_on,
+            processing: false
+          });
+        }
+      })
+      .catch(() => {
+        setTimeout(this.loadValidatedLinks.bind(this), 10000);
+      });
+  }
+
+  private onRefreshClicked() {
+    this.loadValidatedLinks(true);
   }
 
   public render(): JSX.Element {
@@ -124,18 +150,27 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
                         {link.status_code}
                       </a>
                     )}
-                    {renderIf(!!link.processing)(<Loading size={3} units={3} color={'#289f9b'} />)}
                   </div>
                 );
               })}
             </div>
             <div className={styles.buttons}>
-              <div className={styles.last_updated}>
-                Last run: {dateFormat(this.state.lastRun, 'mmmm d, yyyy, h:MM TT', this.props.utc)}
-              </div>
-              <button className={styles.validate} onClick={() => {}}>
-                {'Validate Links'}
-              </button>
+              {renderIf(!this.state.processing)(
+                <>
+                  <div className={styles.last_updated}>
+                    Last run:{' '}
+                    {dateFormat(this.state.lastRun, 'mmmm d, yyyy, h:MM TT', this.props.utc)}
+                  </div>
+                  <button className={styles.validate} onClick={this.onRefreshClicked.bind(this)}>
+                    {'Validate Links'}
+                  </button>
+                </>
+              )}
+              {renderIf(this.state.processing)(
+                <div className={styles.loading}>
+                  <Loading size={10} units={5} color={'#289f9b'} />
+                </div>
+              )}
             </div>
           </div>
         </PopTab>

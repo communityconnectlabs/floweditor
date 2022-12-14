@@ -19,6 +19,7 @@ Array [
     "labels": "/assets/labels.json",
     "languages": "/assets/languages.json",
     "link": "",
+    "links": "/assets/links.json",
     "lookups": "",
     "recents": "/assets/recents.json",
     "recipients": "/assets/recipients.json",
@@ -114,6 +115,14 @@ exports[`Root render should render flow if passed a definition, language 1`] = `
         mutable={true}
         onToggled={[Function]}
         popped={null}
+      />
+      <LinksExplorer
+        linksUrl="/assets/links.json"
+        loadFlowDefinition={[MockFunction]}
+        onLinkClicked={[Function]}
+        onToggled={[Function]}
+        popped={null}
+        position="416px"
       />
       <div
         id="portal-root"

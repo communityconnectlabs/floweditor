@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LinksExplorer render should render base component 1`] = `
+<div
+  className=""
+>
+  <div
+    className="mask"
+  />
+  <PopTab
+    color="#289f9b"
+    header="Links"
+    icon="fe-link"
+    label="Validate Links"
+    onHide={[Function]}
+    onShow={[Function]}
+    visible={false}
+  >
+    <div
+      className="links_wrapper"
+    >
+      <div
+        className="links"
+      />
+      <div
+        className="buttons"
+      >
+        <div
+          className="loading"
+        >
+          <Loading
+            color="#289f9b"
+            size={10}
+            units={5}
+          />
+        </div>
+      </div>
+    </div>
+  </PopTab>
+</div>
+`;
