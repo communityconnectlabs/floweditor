@@ -10,6 +10,7 @@ import Loading from 'components/loading/Loading';
 import Modal from 'components/modal/Modal';
 import { RevisionExplorer } from 'components/revisions/RevisionExplorer';
 import { IssuesTab, IssueDetail } from 'components/issues/IssuesTab';
+import { LinksExplorer } from 'components/links/LinksExplorer';
 import ConfigProvider from 'config';
 import { fakePropType } from 'config/ConfigProvider';
 import { FlowDefinition, FlowEditorConfig, AnyAction } from 'flowTypes';
@@ -345,6 +346,30 @@ export class FlowEditor extends React.Component<FlowEditorStoreProps> {
                 popped={this.props.popped}
               />
             )}
+
+            {renderIf(!!this.props.definition)(
+              <LinksExplorer
+                linksUrl={this.context.config.endpoints.links}
+                onToggled={this.handleTabPopped}
+                onLinkClicked={this.handleScrollToNode}
+                popped={this.props.popped}
+                position={
+                  [
+                    ['416px', Object.keys(this.props.issues).length <= 0],
+                    [
+                      '471px',
+                      this.props.definition &&
+                        this.props.translating &&
+                        !this.props.fetchingFlow &&
+                        this.context.config.mutable
+                    ],
+                    ['526px', true]
+                  ].find(el => Boolean(el[1]))[0]
+                }
+                loadFlowDefinition={this.props.loadFlowDefinition}
+              />
+            )}
+
             <div id="portal-root" />
             <div id="canvas-portal" />
           </div>

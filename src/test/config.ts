@@ -30,6 +30,7 @@ export const config: FlowEditorConfig = {
     templates: '/assets/templates.json',
     users: '/assets/users.json',
     topics: '/assets/topics.json',
+    links: '/assets/links.json',
     editor: '/flow/editor',
     activity: '',
     simulateStart: '',
