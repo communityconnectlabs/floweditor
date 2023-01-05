@@ -141,6 +141,7 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
                       <a
                         href={link.link}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className={
                           styles.status_code +
                           ' ' +

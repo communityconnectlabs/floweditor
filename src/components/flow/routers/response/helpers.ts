@@ -19,7 +19,7 @@ import { getLocalizations } from 'store/helpers';
 import { RouterFormProps } from 'components/flow/props';
 import moment from 'moment-timezone';
 
-export enum AutomatedTestCaseType {
+export enum ResponseTestCaseType {
   AUTO_GENERATED,
   USER_GENERATED
 }
@@ -60,8 +60,8 @@ const DATE_PATTERNS = {
   ISO_FORMAT: /(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.(\d{0,9}))?([+-]\d{2}:\d{2}|Z))/
 };
 
-export interface AutomatedTestCase {
-  type: AutomatedTestCaseType;
+export interface ResponseTestCase {
+  type: ResponseTestCaseType;
   testText: string;
   actualCategory: string;
   confirmedCategory: string;
@@ -77,7 +77,7 @@ export interface TimezoneData {
 interface ConfigRouter {
   spell_checker?: boolean;
   spelling_correction_sensitivity?: string;
-  test_cases?: { [lang: string]: AutomatedTestCase[] };
+  test_cases?: { [lang: string]: ResponseTestCase[] };
 }
 
 enum Comparators {
@@ -322,9 +322,9 @@ export const generateAutomatedTest = (
   caseItem: CaseProps,
   cases: CaseProps[],
   timezoneData: TimezoneData
-): AutomatedTestCase => {
+): ResponseTestCase => {
   let testCase = {
-    type: AutomatedTestCaseType.AUTO_GENERATED,
+    type: ResponseTestCaseType.AUTO_GENERATED,
     testText: caseItem.kase.arguments[0],
     actualCategory: matchResponseTextWithCategory(
       caseItem.kase.arguments[0],
@@ -333,19 +333,19 @@ export const generateAutomatedTest = (
     ).join(', '),
     confirmedCategory: caseItem.categoryName
   };
-  return testCase as AutomatedTestCase;
+  return testCase as ResponseTestCase;
 };
 
 export const generateAutomatedTests = (
   cases: CaseProps[],
   timezoneData: TimezoneData
-): AutomatedTestCase[] => {
-  let testCases: AutomatedTestCase[] = [];
+): ResponseTestCase[] => {
+  let testCases: ResponseTestCase[] = [];
   cases = cases.filter(case_ => ALLOWED_AUTO_TESTS.includes(case_.kase.type));
   cases.forEach(item => {
     let testCase = generateAutomatedTest(item, cases, timezoneData);
     if (testCase.confirmedCategory) {
-      testCases.push(testCase as AutomatedTestCase);
+      testCases.push(testCase as ResponseTestCase);
     }
   });
   return testCases;
@@ -523,7 +523,7 @@ export const nodeToState = (settings: NodeEditorSettings, props?: any): Response
     testingLangs: languages,
     testingLang: currentLanguage,
     liveTestText: { value: '' },
-    automatedTestCases: testCases,
+    responseTestCases: testCases,
     localizedCases,
     activeLocalizations,
     testResults,
@@ -560,10 +560,12 @@ export const stateToNode = (
     config.spelling_correction_sensitivity = state.spellSensitivity;
   }
 
-  if (state.automatedTestCases) {
+  if (state.responseTestCases) {
     config.test_cases = {};
-    for (const [lang, testCases] of Object.entries(state.automatedTestCases)) {
-      config.test_cases[lang] = testCases.filter(test => !test.deleted);
+    for (const [lang, testCases] of Object.entries(state.responseTestCases)) {
+      config.test_cases[lang] = testCases.filter(
+        test => !test.deleted || test.type === ResponseTestCaseType.AUTO_GENERATED
+      );
     }
   }
 
