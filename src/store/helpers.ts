@@ -757,6 +757,13 @@ export const fetchFlowActivity = (
           updates.activity = activity;
         }
 
+        if (activity.session_expired) {
+          if (!(window as any).editorWaitForSessionTimeoutEventProcesses) {
+            (window as any).editorWaitForSessionTimeoutEventProcesses = true;
+            document.dispatchEvent(new Event('editor-session-timeout'));
+          }
+        }
+
         if (!window.getSelection().toString()) {
           // do re-rendering with new data only if there no text selected or highlighted
           dispatch(mergeEditorState(updates));

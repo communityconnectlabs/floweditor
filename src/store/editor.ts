@@ -24,6 +24,7 @@ export interface Activity {
   segments: { [exitToNodeKey: string]: number };
   recentMessages?: { [key: string]: RecentMessage[] };
   is_starting?: boolean;
+  session_expired?: boolean;
 }
 
 export interface RecentMessage {
