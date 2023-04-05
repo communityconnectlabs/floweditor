@@ -11,6 +11,7 @@ import { AssetStore } from '../../store/flowContext';
 import { renderIf } from '../../utils';
 import Loading from '../loading/Loading';
 import dateFormat from 'dateformat';
+import moment from 'moment-timezone/moment-timezone-utils';
 
 const cx: any = classNames.bind(styles);
 
@@ -91,9 +92,9 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
           setTimeout(this.loadValidatedLinks.bind(this), data.refresh_timeout);
         } else {
           this.setState({
-            links: data.links,
-            lastRun: data.processed_on,
-            processing: false
+            links: data.links || [],
+            lastRun: data.processed_on || moment().format('MMMM D, YYYY, h:mm A'),
+            processing: !data.links
           });
         }
       })
