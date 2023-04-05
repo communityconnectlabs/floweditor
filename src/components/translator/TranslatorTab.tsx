@@ -298,9 +298,11 @@ export class TranslatorTab extends React.Component<TranslatorTabProps, Translato
           color="#777"
           icon="fe-language"
           top="471px"
+          popTop="100px"
           visible={this.state.visible}
           onShow={this.handleTabClicked}
           onHide={this.handleTabClicked}
+          custom={false}
         >
           <div key={'translation_wrapper'} className={wrapperClasses}>
             {this.state.translationBundles.map((bundle: TranslationBundle) => {
