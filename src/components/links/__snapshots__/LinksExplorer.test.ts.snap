@@ -9,11 +9,13 @@ exports[`LinksExplorer render should render base component 1`] = `
   />
   <PopTab
     color="#289f9b"
+    custom={false}
     header="Links"
     icon="fe-link"
     label="Validate Links"
     onHide={[Function]}
     onShow={[Function]}
+    popTop="-60px"
     visible={false}
   >
     <div

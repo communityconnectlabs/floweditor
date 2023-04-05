@@ -672,31 +672,6 @@ Object {
   "activeLocalizations": Array [
     "eng",
   ],
-  "automatedTestCases": Object {
-    "eng": Array [
-      Object {
-        "actualCategory": "Red",
-        "confirmed": true,
-        "confirmedCategory": "Red",
-        "testText": "red",
-        "type": 0,
-      },
-      Object {
-        "actualCategory": "Red",
-        "confirmed": true,
-        "confirmedCategory": "Red",
-        "testText": "maroon",
-        "type": 0,
-      },
-      Object {
-        "actualCategory": "Green",
-        "confirmed": true,
-        "confirmedCategory": "Green",
-        "testText": "green",
-        "type": 0,
-      },
-    ],
-  },
   "cases": Array [
     Object {
       "categoryName": "Red",
@@ -770,6 +745,31 @@ Object {
         },
         "uuid": "1dce2b34-9aab-4e20-81c4-3f0408dcb671",
         "valid": true,
+      },
+    ],
+  },
+  "responseTestCases": Object {
+    "eng": Array [
+      Object {
+        "actualCategory": "Red",
+        "confirmed": true,
+        "confirmedCategory": "Red",
+        "testText": "red",
+        "type": 0,
+      },
+      Object {
+        "actualCategory": "Red",
+        "confirmed": true,
+        "confirmedCategory": "Red",
+        "testText": "maroon",
+        "type": 0,
+      },
+      Object {
+        "actualCategory": "Green",
+        "confirmed": true,
+        "confirmedCategory": "Green",
+        "testText": "green",
+        "type": 0,
       },
     ],
   },
@@ -923,9 +923,6 @@ Object {
   "activeLocalizations": Array [
     "eng",
   ],
-  "automatedTestCases": Object {
-    "eng": Array [],
-  },
   "cases": Array [
     Object {
       "categoryName": "In the Zone",
@@ -957,6 +954,9 @@ Object {
         "valid": true,
       },
     ],
+  },
+  "responseTestCases": Object {
+    "eng": Array [],
   },
   "resultName": Object {
     "value": "",

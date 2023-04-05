@@ -121,9 +121,11 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
           icon="fe-link"
           label={i18n.t('links.label', 'Validate Links')}
           top={this.props.position}
+          popTop={'-60px'}
           visible={this.state.visible}
           onShow={this.handleTabClicked}
           onHide={this.handleTabClicked}
+          custom={false}
         >
           <div className={styles.links_wrapper}>
             <div className={styles.links}>

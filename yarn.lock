@@ -1127,10 +1127,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@greatnonprofits-nfp/temba-components@0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@greatnonprofits-nfp/temba-components/-/temba-components-0.21.0.tgz#ca253bc66fc57c55e2161b41a90a16efd98da53e"
-  integrity sha512-I268ArQNV+kyKk39ggeoiHi9f6cJAWnS6juFVXLIjHhI0FOaXXt1APXIQhoaILy2mGl4qz/nR09oUsEKuU70IQ==
+"@greatnonprofits-nfp/temba-components@0.26.1":
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/@greatnonprofits-nfp/temba-components/-/temba-components-0.26.1.tgz#01c64dcedd66b40382490530ceef36c48ab45614"
+  integrity sha512-pzseYCOQF0ewkS4Sil4/AZWl484kiZlP2MhU4E7z8CeenNk4RI8YxdsEZjoas5CNhusqY3o9RghrrIBhGGweuQ==
   dependencies:
     flru "^1.0.2"
     geojson "^0.5.0"
@@ -1140,7 +1140,7 @@
     lit-element "^2.0.1"
     lit-flatpickr "^0.2.2"
     lit-html "^1.0.0"
-    marked "0.7.0"
+    marked "4.0.10"
     remarkable "^2.0.1"
     serialize-javascript "^3.0.0"
 
@@ -8337,10 +8337,10 @@ markdown-escapes@^1.0.0:
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.4.tgz#c95415ef451499d7602b91095f3c8e8975f78535"
   integrity sha512-8z4efJYk43E0upd0NbVXwgSTQs6cT3T06etieCMEg7dRbzCbxUCK/GHlX8mhHRDcp+OLlHkPKsvqQTCvsRl2cg==
 
-marked@0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.7.0.tgz#b64201f051d271b1edc10a04d1ae9b74bb8e5c0e"
-  integrity sha512-c+yYdCZJQrsRjTPhUx7VKkApw9bwDkNbHUKo1ovgcfDjb2kc8rLuRbIFyXL5WOEUwzSSKo3IXpph2K6DqB/KZg==
+marked@4.0.10:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.10.tgz#423e295385cc0c3a70fa495e0df68b007b879423"
+  integrity sha512-+QvuFj0nGgO970fySghXGmuw+Fd0gD2x3+MqCWLIPf5oxdv1Ka6b2q+z9RP01P/IaKPMEramy+7cNy/Lw8c3hw==
 
 matcher@^1.0.0:
   version "1.1.1"
