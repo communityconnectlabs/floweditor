@@ -12,6 +12,10 @@ import { shouldRequireIf, validate } from 'store/validators';
 import { initializeForm, stateToAction } from './helpers';
 import i18n from 'config/i18n';
 import { renderIssues } from '../helpers';
+import { MediaPlayer } from '../../../mediaplayer/MediaPlayer';
+import { renderIf } from '../../../../utils';
+
+import styles from './SayMsgForm.module.scss';
 
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
@@ -91,14 +95,21 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
           textarea={true}
         />
 
-        <UploadButton
-          icon="fe-mic"
-          uploadText="Upload Recording"
-          removeText="Remove Recording"
-          url={this.state.audio.value}
-          endpoint={this.context.config.endpoints.attachments}
-          onUploadChanged={this.handleUploadChanged}
-        />
+        <div className={styles.upload_recording_container}>
+          <UploadButton
+            icon="fe-mic"
+            uploadText="Upload Recording"
+            removeText="Remove Recording"
+            url={this.state.audio.value}
+            endpoint={this.context.config.endpoints.attachments}
+            onUploadChanged={this.handleUploadChanged}
+          />
+          {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
+            <div className={styles.media_player}>
+              <MediaPlayer url={this.state.audio.value} />
+            </div>
+          )}
+        </div>
         {renderIssues(this.props)}
       </Dialog>
     );
