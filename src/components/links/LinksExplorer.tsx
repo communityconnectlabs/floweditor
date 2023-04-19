@@ -42,7 +42,7 @@ export interface LinksExplorerProps {
 export interface LinksExplorerState {
   definition: FlowDefinition;
   visible: boolean;
-  links: Array<LinkData>;
+  links: LinkData[];
   lastRun?: string | Date;
   processing?: boolean;
 }
@@ -121,7 +121,7 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
           color="#289f9b"
           icon="fe-link"
           label={i18n.t('links.label', 'Validate Links')}
-          top={this.props.position}
+          top={'320px'}
           popTop={'-60px'}
           visible={this.state.visible}
           onShow={this.handleTabClicked}
