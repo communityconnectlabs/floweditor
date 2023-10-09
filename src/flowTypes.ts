@@ -596,6 +596,13 @@ export interface CallDialogflow extends Action {
   question_src: string;
 }
 
+export interface RequestFeedback extends Action {
+  type: Types.request_feedback;
+  rate_question: string;
+  feedback_question: string;
+  result_name: string;
+}
+
 export type AnyAction =
   | Action
   | ChangeGroups
