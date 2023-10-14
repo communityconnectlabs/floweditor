@@ -598,9 +598,8 @@ export interface CallDialogflow extends Action {
 
 export interface RequestFeedback extends Action {
   type: Types.request_feedback;
-  rate_question: string;
-  feedback_question: string;
-  result_name: string;
+  star_rating_question: string;
+  comment_question: string;
 }
 
 export type AnyAction =

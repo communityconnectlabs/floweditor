@@ -73,8 +73,8 @@ import VoiceCallStatusForm from 'components/flow/routers/voicecallstatus/VoiceCa
 import VoiceCallStatusComp from 'components/flow/actions/voicecallstatus/VoiceCallStatus';
 import { DialogflowRouterForm } from 'components/flow/routers/dialogflow';
 import CallDialogflowComp from '../components/flow/actions/calldialogflow/CallDialogflow';
-import RequestFeedbackForm from 'components/flow/actions/requestfeedback/RequestFeedbackForm';
-import RequestFeedbackComp from 'components/flow/actions/requestfeedback/RequestFeedback';
+import RequestFeedbackForm from 'components/flow/routers/requestfeedback/RequestFeedbackForm';
+import RequestFeedbackComp from 'components/flow/routers/requestfeedback/RequestFeedback';
 
 const dedupeTypeConfigs = (typeConfigs: Type[]) => {
   const map: any = {};

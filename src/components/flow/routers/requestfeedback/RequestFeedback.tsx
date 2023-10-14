@@ -8,11 +8,13 @@ export const PLACEHOLDER = i18n.t(
 );
 
 const RequestFeedbackComp: React.SFC<RequestFeedback> = (action: RequestFeedback): JSX.Element => {
-  if (action.feedback_question.length > 0 || action.rate_question.length > 0) {
+  if (action.comment_question.length > 0 || action.star_rating_question.length > 0) {
     return (
       <>
-        <div>{action.rate_question}</div>
-        <div>{action.feedback_question}</div>
+        <div style={{ fontWeight: 500 }}>Star Rating Question:</div>
+        <div>{action.star_rating_question}</div>
+        <div style={{ fontWeight: 500 }}>Comment Question:</div>
+        <div>{action.comment_question}</div>
       </>
     );
   }
