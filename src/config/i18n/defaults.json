@@ -40,6 +40,11 @@
       "description": "Remove the contact from a group",
       "name": "Remove from Group"
     },
+    "request_feedback": {
+      "description": "Request Feedback",
+      "name": "Request Feedback",
+      "placeholder": "Request Feedback from Contact"
+    },
     "say_msg": {
       "placeholder": "Send a message to the contact"
     },
