@@ -6,6 +6,7 @@ import { RouterFormProps } from 'components/flow/props';
 import { nodeToState, stateToNode, LookupQueryEntry } from 'components/flow/routers/lookup/helpers';
 import { createResultNameInput } from 'components/flow/routers/widgets';
 import AssetSelector from 'components/form/assetselector/AssetSelector';
+import CheckboxElement from 'components/form/checkbox/CheckboxElement';
 import TypeList from 'components/nodeeditor/TypeList';
 import { Asset } from 'store/flowContext';
 import { FormState, mergeForm, StringEntry, AssetEntry } from 'store/nodeEditor';
@@ -23,6 +24,7 @@ import { validateLookupQuery } from './validators';
 export interface LookupRouterFormState extends FormState {
   lookupDb: AssetEntry;
   lookupQueries: LookupQueryEntry[];
+  returnAll: boolean;
   resultName: StringEntry;
 }
 
@@ -111,6 +113,15 @@ export default class LookupRouterForm extends React.Component<
     return updated.valid;
   }
 
+  private handleUpdateReturnAll(value: boolean): void {
+    const updates: Partial<LookupRouterFormState> = {
+      returnAll: value
+    };
+
+    const updated = mergeForm(this.state, updates);
+    this.setState(updated);
+  }
+
   private handleSave(): void {
     // validate in case they never updated an empty field
     const updates: Partial<LookupRouterFormState> = {
@@ -169,6 +180,14 @@ export default class LookupRouterForm extends React.Component<
             />
           </LookQueryContext.Provider>
         )}
+        <div style={{ paddingTop: '10px' }}>
+          <CheckboxElement
+            name="Lookup Return All"
+            checked={this.state.returnAll}
+            description="Return all matches"
+            onChange={this.handleUpdateReturnAll}
+          />
+        </div>
         {createResultNameInput(
           this.state.resultName,
           this.handleUpdateResultName,
