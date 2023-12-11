@@ -73,6 +73,8 @@ import VoiceCallStatusForm from 'components/flow/routers/voicecallstatus/VoiceCa
 import VoiceCallStatusComp from 'components/flow/actions/voicecallstatus/VoiceCallStatus';
 import { DialogflowRouterForm } from 'components/flow/routers/dialogflow';
 import CallDialogflowComp from '../components/flow/actions/calldialogflow/CallDialogflow';
+import RequestFeedbackForm from 'components/flow/routers/requestfeedback/RequestFeedbackForm';
+import RequestFeedbackComp from 'components/flow/routers/requestfeedback/RequestFeedback';
 
 const dedupeTypeConfigs = (typeConfigs: Type[]) => {
   const map: any = {};
@@ -459,6 +461,14 @@ export const typeConfigList: Type[] = [
     aliases: [Types.split_by_voicecall_status],
     visibility: VISIBILITY_VOICE,
     filter: FeatureFilter.HAS_MACHINE_DETECTION
+  },
+  {
+    type: Types.request_feedback,
+    name: i18n.t('actions.request_feedback.name', 'Request Feedback'),
+    description: i18n.t('actions.request_feedback.description', 'Request Feedback'),
+    form: RequestFeedbackForm,
+    component: RequestFeedbackComp,
+    visibility: [FlowTypes.MESSAGING]
   },
 
   /** Routers */

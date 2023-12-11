@@ -68,7 +68,8 @@ export enum Types {
   say_msg = 'say_msg',
   play_audio = 'play_audio',
   voicecall_status = 'voicecall_status',
-  call_dialogflow = 'call_dialogflow'
+  call_dialogflow = 'call_dialogflow',
+  request_feedback = 'request_feedback'
 }
 
 export enum Operators {
