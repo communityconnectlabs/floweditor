@@ -489,6 +489,7 @@ export interface LookupQuery {
 export interface CallLookup extends Action {
   lookup_db: LookupDB;
   lookup_queries: LookupQuery[];
+  return_all: boolean;
   result_name: string;
 }
 
