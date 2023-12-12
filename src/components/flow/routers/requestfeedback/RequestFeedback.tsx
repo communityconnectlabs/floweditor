@@ -15,6 +15,8 @@ const RequestFeedbackComp: React.SFC<RequestFeedback> = (action: RequestFeedback
         <div>{action.star_rating_question}</div>
         <div style={{ fontWeight: 500 }}>Comment Question:</div>
         <div>{action.comment_question}</div>
+        <div style={{ fontWeight: 500 }}>SMS Question:</div>
+        <div>{action.sms_question}</div>
       </>
     );
   }

@@ -600,6 +600,7 @@ export interface RequestFeedback extends Action {
   type: Types.request_feedback;
   star_rating_question: string;
   comment_question: string;
+  sms_question: string;
 }
 
 export type AnyAction =
