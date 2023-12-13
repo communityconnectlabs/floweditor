@@ -17,6 +17,7 @@ import TimeoutControl from 'components/form/timeout/TimeoutControl';
 export interface RequestFeedbackFormState extends FormState {
   starRatingQuestion: StringEntry;
   commentQuestion: StringEntry;
+  smsQuestion: StringEntry;
   resultName: StringEntry;
   timeout: number;
 }
@@ -62,24 +63,33 @@ export default class RequestFeedbackForm extends Component<
       ]);
     }
 
+    if (state.smsQuestion.hasOwnProperty('value')) {
+      updates.smsQuestion = validate('SMS Question', state.smsQuestion.value!, [
+        shouldRequireIf(submitting)
+      ]);
+    }
+
     const updated = mergeForm(this.state, updates);
     this.setState(updated);
     return updated.valid;
   }
 
   private handleUpdateStarRatingQuestion(value: string): void {
-    const starRatingQuestion = validate('Star Rating Question', value, [
-      Alphanumeric,
-      StartIsNonNumeric
-    ]);
+    const starRatingQuestion = validate('Star Rating Question', value, [StartIsNonNumeric]);
 
     this.setState({ starRatingQuestion, valid: !hasErrors(starRatingQuestion) });
   }
 
   private handleUpdateCommentQuestion(value: string): void {
-    const commentQuestion = validate('Comment Question', value, [Alphanumeric, StartIsNonNumeric]);
+    const commentQuestion = validate('Comment Question', value, [StartIsNonNumeric]);
 
     this.setState({ commentQuestion, valid: !hasErrors(commentQuestion) });
+  }
+
+  private handleUpdateSMSQuestion(value: string): void {
+    const smsQuestion = validate('SMS Question', value, [StartIsNonNumeric]);
+
+    this.setState({ smsQuestion, valid: !hasErrors(smsQuestion) });
   }
 
   private handleUpdateResultName(value: string): void {
@@ -134,6 +144,15 @@ export default class RequestFeedbackForm extends Component<
           placeholder="Type a question that will be displayed with text input field..."
           onChange={this.handleUpdateCommentQuestion}
           entry={this.state.commentQuestion}
+          autocomplete={true}
+        />
+        <TextInputElement
+          __className={styles.question}
+          showLabel={true}
+          name={i18n.t('forms.comment_question', 'SMS Question')}
+          placeholder="Type a question that will be displayed for SMS type channels..."
+          onChange={this.handleUpdateSMSQuestion}
+          entry={this.state.smsQuestion}
           autocomplete={true}
         />
         {createResultNameInput(this.state.resultName, this.handleUpdateResultName)}

@@ -20,6 +20,7 @@ export const initializeForm = (settings: NodeEditorSettings): RequestFeedbackFor
       return {
         starRatingQuestion: { value: action.star_rating_question },
         commentQuestion: { value: action.comment_question },
+        smsQuestion: { value: action.sms_question || '' },
         resultName: { value: router.result_name || '' },
         timeout: timeout,
         valid: true
@@ -30,6 +31,7 @@ export const initializeForm = (settings: NodeEditorSettings): RequestFeedbackFor
   return {
     starRatingQuestion: { value: '' },
     commentQuestion: { value: '' },
+    smsQuestion: { value: '' },
     resultName: { value: 'Result' },
     timeout: 0,
     valid: false
@@ -88,5 +90,6 @@ export const stateToAction = (
   uuid: getActionUUID(settings, Types.request_feedback),
   type: Types.request_feedback,
   star_rating_question: state.starRatingQuestion.value,
-  comment_question: state.commentQuestion.value
+  comment_question: state.commentQuestion.value,
+  sms_question: state.smsQuestion.value
 });
