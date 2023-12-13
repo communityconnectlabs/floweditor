@@ -36,6 +36,7 @@ export const nodeToState = (settings: NodeEditorSettings): LookupRouterFormState
       value: { id: '', name: '', type: AssetType.Lookup }
     },
     lookupQueries: [],
+    returnAll: false,
     resultName,
     valid: false
   };
@@ -43,6 +44,7 @@ export const nodeToState = (settings: NodeEditorSettings): LookupRouterFormState
   if (settings.originalNode.ui.type === Types.split_by_lookup) {
     const action = getOriginalAction(settings) as CallLookup;
 
+    state.returnAll = action.return_all;
     state.resultName = { value: action.result_name };
     state.lookupDb = {
       value: {
@@ -86,6 +88,7 @@ export const stateToNode = (
       // @ts-ignore
       text: state.lookupDb.value.name || state.lookupDb.value.text
     },
+    return_all: state.returnAll || false,
     result_name: state.resultName.value
   };
 
