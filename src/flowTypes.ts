@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Methods } from 'components/flow/routers/webhook/helpers';
 import { FlowTypes, Operators, Types, ContactStatus } from 'config/interfaces';
+import { ExclusionsCheckboxEntry } from 'store/nodeEditor';
 
 // we don't concern ourselves with patch versions
-export const SPEC_VERSION = '13.1';
+export const SPEC_VERSION = '13.5';
 
 export interface Languages {
   [iso: string]: string;
@@ -28,16 +30,16 @@ export interface Endpoints {
   globals: string;
   groups: string;
   recipients: string;
+  contacts: string;
   flows: string;
   revisions: string;
   activity: string;
   labels: string;
+  optins: string;
   channels: string;
   classifiers: string;
-  ticketers: string;
   users: string;
   topics: string;
-  environment: string;
   languages: string;
   templates: string;
   simulateStart: string;
@@ -57,6 +59,7 @@ export interface FlowEditorConfig {
   path?: string;
   headers?: any;
   brand: string;
+
   onLoad?: () => void;
   onActivityClicked?: (uuid: string) => void;
   onChangeLanguage?: (code: string, name: string) => void;
@@ -152,6 +155,7 @@ export interface FlowDefinition {
   name: string;
   nodes: FlowNode[];
   uuid: string;
+  type: FlowTypes;
   revision: number;
   spec_version: string;
   _ui: UIMetaData;
@@ -200,18 +204,6 @@ export interface Category {
   exit_uuid: string;
 }
 
-export interface TemplateTranslation {
-  language: string;
-  status: string;
-  content: string;
-}
-
-export interface Template {
-  created_on: Date;
-  modified_on: Date;
-  translations: TemplateTranslation[];
-}
-
 export interface SwitchRouter extends Router {
   cases: Case[];
   operand: string;
@@ -246,6 +238,17 @@ export interface Wait {
   timeout?: Timeout;
   hint?: Hint;
   phone?: string;
+  dial_limit_seconds?: number;
+  call_limit_seconds?: number;
+}
+
+export interface ComposeAttachment {
+  uuid: string;
+  content_type: string;
+  url: string;
+  filename: string;
+  size: number;
+  error: string;
 }
 
 export interface Group {
@@ -276,6 +279,11 @@ export interface Label {
   uuid: string;
   name: string;
   name_match?: string;
+}
+
+export interface OptIn {
+  uuid: string;
+  name: string;
 }
 
 export interface Flow {
@@ -330,12 +338,19 @@ export interface RecipientsAction extends Action {
   legacy_vars?: string[];
 }
 
+export interface Component {
+  name: string;
+  params: string[];
+  content: string;
+}
+
 export interface TemplateTranslation {
   channel: Channel;
   content: string;
   language: string;
   status: string;
-  variable_count: number;
+  variables: { type: string }[];
+  components: Component[];
 }
 
 export interface TemplateOptions {
@@ -347,10 +362,15 @@ export interface MsgTemplate {
   uuid: string;
 }
 
-export interface MsgTemplating {
+export interface MsgTemplateComponent {
   uuid: string;
+  name: string;
+  params: string[];
+}
+
+export interface MsgTemplating {
   template: MsgTemplate;
-  variables: string[];
+  components?: MsgTemplateComponent[];
 }
 
 export interface SendMsg extends Action {
@@ -359,7 +379,11 @@ export interface SendMsg extends Action {
   quick_replies?: string[];
   attachments?: string[];
   topic?: string;
-  templating?: MsgTemplating;
+  template?: {
+    uuid: string;
+    name: string;
+  };
+  template_variables?: string[];
 }
 
 export interface SayMsg extends Action {
@@ -372,11 +396,20 @@ export interface PlayAudio extends Action {
 }
 
 export interface BroadcastMsg extends RecipientsAction {
-  text: string;
+  compose: string;
+  text?: string;
+  attachments?: string[];
 }
 
 export interface AddLabels extends Action {
   labels: Label[];
+}
+
+export interface RequestOptIn extends Action {
+  optin: {
+    uuid: string;
+    name: string;
+  };
 }
 
 export interface AddURN extends Action {
@@ -409,11 +442,6 @@ export interface Classifier {
   name: string;
 }
 
-export interface Ticketer {
-  uuid: string;
-  name: string;
-}
-
 export interface TransferAirtime extends Action {
   amounts: { [name: string]: number };
   result_name: string;
@@ -439,10 +467,9 @@ export interface CallWebhook extends Action {
 }
 
 export interface OpenTicket extends Action {
-  ticketer: Ticketer;
   subject?: string;
   topic?: Topic;
-  body: string;
+  body?: string;
   result_name: string;
   assignee?: User;
 }
@@ -455,6 +482,7 @@ export interface StartSession extends RecipientsAction {
   flow: Flow;
   create_contact?: boolean;
   contact_query?: string;
+  exclusions?: ExclusionsCheckboxEntry;
 }
 
 export interface UIMetaData {

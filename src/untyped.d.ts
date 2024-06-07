@@ -10,5 +10,10 @@ declare namespace JSX {
     'temba-option': any;
     'temba-checkbox': any;
     'temba-charcount': any;
+    'temba-loading': any;
+    'temba-compose': any;
+    'temba-icon': any;
+    'temba-sortable-list': any;
+    'temba-template-editor': any;
   }
 }

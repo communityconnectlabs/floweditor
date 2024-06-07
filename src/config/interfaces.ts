@@ -56,6 +56,7 @@ export enum Types {
   wait_for_video = 'wait_for_video',
   wait_for_location = 'wait_for_location',
   wait_for_image = 'wait_for_image',
+  request_optin = 'request_optin',
   missing = 'missing',
   say_msg = 'say_msg',
   play_audio = 'play_audio'
@@ -85,7 +86,6 @@ export enum Operators {
   has_group = 'has_group',
   has_phone = 'has_phone',
   has_email = 'has_email',
-  has_value = 'has_value',
   has_district = 'has_district',
   has_state = 'has_state',
   has_ward = 'has_ward',
@@ -93,7 +93,8 @@ export enum Operators {
   has_error = 'has_error',
   has_intent = 'has_intent',
   has_top_intent = 'has_top_intent',
-  has_category = 'has_category'
+  has_category = 'has_category',
+  has_value = 'has_value' // deprecated, use has_text
 }
 
 export enum FeatureFilter {
@@ -101,9 +102,9 @@ export enum FeatureFilter {
   HAS_WHATSAPP = 'whatsapp',
   HAS_AIRTIME = 'airtime',
   HAS_CLASSIFIER = 'classifier',
-  HAS_TICKETER = 'ticketer',
   HAS_FACEBOOK = 'facebook',
-  HAS_LOCATIONS = 'locations'
+  HAS_LOCATIONS = 'locations',
+  HAS_OPTINS = 'optins'
 }
 
 export interface FlowTypeVisibility {

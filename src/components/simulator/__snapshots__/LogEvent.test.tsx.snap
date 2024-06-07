@@ -159,7 +159,9 @@ exports[`LogEvent should render email_sent event 1`] = `
           <div
             class="info email"
           >
-            Sent email to &quot;fun@temba.io&quot;, &quot;events@temba.io&quot; with subject "Party time"
+            <span>
+              Sent email to "fun@temba.io", "events@temba.io" with subject "Party time"
+            </span>
           </div>
         </div>
       </div>
@@ -398,6 +400,25 @@ exports[`LogEvent should render ticket_opened event 1`] = `
       >
         <span>
           Ticket opened with topic "Support"
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`LogEvent should render warning event 1`] = `
+<body>
+  <div>
+    <div
+      class="evt"
+    >
+      <div
+        class="warning"
+      >
+        <span>
+          Warning: 
+          I'm an warning
         </span>
       </div>
     </div>

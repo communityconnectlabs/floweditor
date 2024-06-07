@@ -91,7 +91,7 @@ export default class CurrencyElement extends React.Component<CurrencyElementProp
             this.props.onRemove(this.props.index);
           }}
         >
-          <span className="fe-x" />
+          <temba-icon name="delete_small"></temba-icon>
         </div>
       ) : null;
 
@@ -101,6 +101,10 @@ export default class CurrencyElement extends React.Component<CurrencyElementProp
           (airtime: AirtimeTransferEntry) => airtime.value.code === asset.id
         ).length > 1
       );
+    };
+
+    const getCurrencyName = (asset: any): string => {
+      return asset.name + ' (' + asset.id + ')';
     };
 
     return (
@@ -118,6 +122,7 @@ export default class CurrencyElement extends React.Component<CurrencyElementProp
               entry={{ value: currency }}
               nameKey="id"
               valueKey="id"
+              getName={getCurrencyName}
               onChange={this.handleCurrencyChanged}
               assets={this.props.currencies}
               placeholder={i18n.t('forms.currency', 'Select a Currency')}

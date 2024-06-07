@@ -15,6 +15,7 @@ export interface ActionFormProps extends IssueProps {
   nodeSettings: NodeEditorSettings;
   typeConfig: Type;
   assetStore: AssetStore;
+  language: Asset;
 
   addAsset(assetType: string, asset: Asset): void;
 
@@ -23,6 +24,8 @@ export interface ActionFormProps extends IssueProps {
     action: AnyAction,
     onUpdated?: (dispatch: DispatchWithState, getState: GetState) => void
   ): void;
+
+  removeLocalizations(uuid: string, keys?: string[]): void;
 
   // modal notifiers
   onTypeChange(config: Type): void;
@@ -49,6 +52,7 @@ export interface LocalizationFormProps extends IssueProps {
   updateLocalizations(languageCode: string, localizations: any[]): void;
   onClose(canceled: boolean): void;
   helpArticles: { [key: string]: string };
+  assetStore: AssetStore;
 }
 
 export const NAME_PROPERTY: Asset = {

@@ -101,6 +101,13 @@ describe(LogEvent.name, () => {
       ...commonEventProps
     });
   });
+  it('should render warning event', () => {
+    testEventRender({
+      type: 'warning',
+      text: "I'm an warning",
+      ...commonEventProps
+    });
+  });
   it('should render error event', () => {
     testEventRender({
       type: 'error',
@@ -202,7 +209,6 @@ describe(LogEvent.name, () => {
   it('should render ticket_opened event', () => {
     testEventRender({
       type: 'ticket_opened',
-      ticketer: { uuid: '15892014-144c-4721-a611-c80b38481055', name: 'Email Support' },
       ticket: {
         topic: { uuid: 'ee1e36a8-dd42-4464-b6b2-37418a26db1f', name: 'Support' },
         body: 'Where are my cookies?'

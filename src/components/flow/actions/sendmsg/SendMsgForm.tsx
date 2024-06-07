@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { react as bindCallbacks } from 'auto-bind';
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import Dialog, { ButtonSet, Tab } from 'components/dialog/Dialog';
 import { hasErrors, renderIssues } from 'components/flow/actions/helpers';
 import {
@@ -10,37 +11,32 @@ import {
   TOPIC_OPTIONS
 } from 'components/flow/actions/sendmsg/helpers';
 import { ActionFormProps } from 'components/flow/props';
-import AssetSelector from 'components/form/assetselector/AssetSelector';
-import { hasUseableTranslation } from 'components/form/assetselector/helpers';
 import CheckboxElement from 'components/form/checkbox/CheckboxElement';
 import MultiChoiceInput from 'components/form/multichoice/MultiChoice';
 import SelectElement, { SelectOption } from 'components/form/select/SelectElement';
 import TextInputElement from 'components/form/textinput/TextInputElement';
 import TypeList from 'components/nodeeditor/TypeList';
 import { fakePropType } from 'config/ConfigProvider';
-import { fetchAsset } from 'external';
-import { Template, TemplateTranslation } from 'flowTypes';
+import { TemplateTranslation } from 'flowTypes';
 import mutate from 'immutability-helper';
 import * as React from 'react';
-import { Asset } from 'store/flowContext';
 import {
   FormState,
   mergeForm,
   StringArrayEntry,
   StringEntry,
-  SelectOptionEntry,
-  FormEntry
+  SelectOptionEntry
 } from 'store/nodeEditor';
-import { MaxOfTenItems, Required, shouldRequireIf, validate } from 'store/validators';
-import { range } from 'utils';
+import { MaxOfTenItems, shouldRequireIf, validate } from 'store/validators';
 
-import styles from './SendMsgForm.module.scss';
 import { hasFeature } from 'config/typeConfigs';
 import { FeatureFilter } from 'config/interfaces';
 
 import i18n from 'config/i18n';
 import { Trans } from 'react-i18next';
 import { Attachment, renderAttachments } from './attachments';
+import { TembaComponent } from 'temba/TembaComponent';
+import styles from './SendMsgForm.module.scss';
 
 export interface SendMsgFormState extends FormState {
   message: StringEntry;
@@ -48,32 +44,23 @@ export interface SendMsgFormState extends FormState {
   quickReplyEntry: StringEntry;
   sendAll: boolean;
   attachments: Attachment[];
-  template: FormEntry;
+  uploadInProgress: boolean;
+  uploadError: string;
   topic: SelectOptionEntry;
-  templateVariables: StringEntry[];
   templateTranslation?: TemplateTranslation;
+
+  // template uuid to dict of component key to array
+  template: { uuid: string; name: string };
+  templateVariables: string[];
 }
 
 export default class SendMsgForm extends React.Component<ActionFormProps, SendMsgFormState> {
-  private filePicker: any;
-
   constructor(props: ActionFormProps) {
     super(props);
-    this.state = stateToForm(this.props.nodeSettings, this.props.assetStore);
+    this.state = stateToForm(this.props.nodeSettings);
     bindCallbacks(this, {
       include: [/^handle/, /^on/]
     });
-
-    // intialize our templates if we have them
-    if (this.state.template.value !== null) {
-      fetchAsset(this.props.assetStore.templates, this.state.template.value.uuid).then(
-        (asset: Asset) => {
-          if (asset !== null) {
-            this.handleTemplateChanged([{ ...this.state.template.value, ...asset.content }]);
-          }
-        }
-      );
-    }
   }
 
   public static contextTypes = {
@@ -129,6 +116,32 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
     return this.handleUpdate({ sendAll });
   }
 
+  private hasTemplateErrors(): boolean {
+    // if there is an attachment variable, make sure it's not empty
+    const { templateVariables, templateTranslation } = this.state;
+    if (templateTranslation && templateVariables && templateTranslation.variables.length > 0) {
+      const hasMissingAttachment = !!templateTranslation.variables.find(
+        (variable: any, index: number) => {
+          if (
+            variable.type === 'image' ||
+            variable.type === 'document' ||
+            variable.type === 'video' ||
+            variable.type === 'audio'
+          ) {
+            if (templateVariables[index] === '') {
+              return true;
+            }
+          }
+          return false;
+        }
+      );
+      if (hasMissingAttachment) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private handleSave(): void {
     // don't continue if our message already has errors
     if (hasErrors(this.state.message)) {
@@ -137,25 +150,28 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
 
     // make sure we validate untouched text fields and contact fields
     let valid = this.handleMessageUpdate(this.state.message.value, null, true);
-
-    let templateVariables = this.state.templateVariables;
-    // make sure we don't have untouched template variables
-    this.state.templateVariables.forEach((variable: StringEntry, num: number) => {
-      const updated = validate(`Variable ${num + 1}`, variable.value, [Required]);
-      templateVariables = mutate(templateVariables, {
-        [num]: { $merge: updated }
-      }) as StringEntry[];
-      valid = valid && !hasErrors(updated);
-    });
-
-    valid = valid && !hasErrors(this.state.quickReplyEntry);
+    valid = valid && !hasErrors(this.state.quickReplyEntry) && !this.hasTemplateErrors();
 
     if (valid) {
       this.props.updateAction(stateToAction(this.props.nodeSettings, this.state));
+
+      // if we had a template and it doen't match our new template
+      if (this.props.nodeSettings.originalAction) {
+        const originalTemplate = (this.props.nodeSettings.originalAction as any).template;
+        if (originalTemplate) {
+          if (
+            (this.state.template && this.state.template.uuid !== originalTemplate.uuid) ||
+            !this.state.template
+          ) {
+            this.props.removeLocalizations(this.props.nodeSettings.originalAction.uuid, [
+              'template_variables'
+            ]);
+          }
+        }
+      }
+
       // notify our modal we are done
       this.props.onClose(false);
-    } else {
-      this.setState({ templateVariables, valid });
     }
   }
 
@@ -169,46 +185,17 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
     };
   }
 
-  private handleTemplateChanged(selected: any[]): void {
-    const template = selected ? selected[0] : null;
-
-    if (!template) {
-      this.setState({
-        template: { value: null },
-        templateTranslation: null,
-        templateVariables: []
-      });
-    } else {
-      const templateTranslation = template.translations[0];
-
-      const templateVariables =
-        this.state.templateVariables.length === 0 ||
-        (this.state.template.value && this.state.template.value.uuid !== template.uuid)
-          ? range(0, templateTranslation.variable_count).map(() => {
-              return {
-                value: ''
-              };
-            })
-          : this.state.templateVariables;
-
-      this.setState({
-        template: { value: template },
-        templateTranslation,
-        templateVariables
-      });
-    }
+  private handleTemplateChanged(event: any): void {
+    const { template, translation, variables } = event.detail;
+    this.setState({
+      template: template ? { uuid: template.uuid, name: template.name } : null,
+      templateVariables: variables,
+      templateTranslation: translation
+    });
   }
 
-  private handleTemplateVariableChanged(updatedText: string, num: number): void {
-    const entry = validate(`Variable ${num + 1}`, updatedText, [Required]);
-    const templateVariables = mutate(this.state.templateVariables, {
-      $merge: { [num]: entry }
-    }) as StringEntry[];
-    this.setState({ templateVariables });
-  }
-
-  private handleShouldExcludeTemplate(template: any): boolean {
-    return !hasUseableTranslation(template as Template);
+  private handleTemplateVariableChanged(event: any): void {
+    this.setState({ templateVariables: event.detail.variables });
   }
 
   private renderTopicConfig(): JSX.Element {
@@ -241,6 +228,7 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
   }
 
   private renderTemplateConfig(): JSX.Element {
+    const uuid = this.state.template ? this.state.template.uuid : null;
     return (
       <>
         <p>
@@ -249,49 +237,81 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
             'Sending messages over a WhatsApp channel requires that a template be used if you have not received a message from a contact in the last 24 hours. Setting a template to use over WhatsApp is especially important for the first message in your flow.'
           )}
         </p>
-        <AssetSelector
-          name={i18n.t('forms.template', 'template')}
-          noOptionsMessage="No templates found"
-          assets={this.props.assetStore.templates}
-          entry={this.state.template}
-          onChange={this.handleTemplateChanged}
-          shouldExclude={this.handleShouldExcludeTemplate}
-          searchable={true}
-          formClearable={true}
-        />
-        {this.state.templateTranslation ? (
-          <>
-            <div className={styles.template_text}>{this.state.templateTranslation.content}</div>
-            {range(0, this.state.templateTranslation.variable_count).map((num: number) => {
-              return (
-                <div className={styles.variable} key={'tr_arg_' + num}>
-                  <TextInputElement
-                    name={`${i18n.t('forms.variable', 'Variable')} ${num + 1}`}
-                    showLabel={false}
-                    placeholder={`${i18n.t('forms.variable', 'Variable')} ${num + 1}`}
-                    onChange={(updatedText: string) => {
-                      this.handleTemplateVariableChanged(updatedText, num);
-                    }}
-                    entry={this.state.templateVariables[num]}
-                    autocomplete={true}
-                  />
-                </div>
-              );
-            })}
-          </>
-        ) : null}
+        <TembaComponent
+          tag="temba-template-editor"
+          eventHandlers={{
+            'temba-context-changed': this.handleTemplateChanged,
+            'temba-content-changed': this.handleTemplateVariableChanged
+          }}
+          template={uuid}
+          url={this.props.assetStore.templates.endpoint}
+          variables={JSON.stringify(this.state.templateVariables)}
+          lang={
+            this.props.language
+              ? this.props.language.id !== 'base'
+                ? this.props.language.id
+                : null
+              : null
+          }
+        ></TembaComponent>
       </>
     );
   }
 
+  private handleAttachmentUploading(isUploading: boolean) {
+    const uploadError = '';
+    console.log(uploadError);
+    this.setState({ uploadError });
+
+    if (isUploading) {
+      const uploadInProgress = true;
+      this.setState({ uploadInProgress });
+    } else {
+      const uploadInProgress = false;
+      this.setState({ uploadInProgress });
+    }
+  }
+
   private handleAttachmentUploaded(response: AxiosResponse) {
-    const attachments: any = mutate(this.state.attachments, {
-      $push: [{ type: response.data.type, url: response.data.url, uploaded: true }]
-    });
-    this.setState({ attachments });
+    //django returns a 200 even when there's an error
+    if (response.data && response.data.error) {
+      const uploadError: string = response.data.error;
+      console.log(uploadError);
+      this.setState({ uploadError });
+    } else {
+      const attachments: any = mutate(this.state.attachments, {
+        $push: [{ type: response.data.type, url: response.data.url, uploaded: true }]
+      });
+      this.setState({ attachments });
+      const uploadError = '';
+      console.log(uploadError);
+      this.setState({ uploadError });
+    }
+
+    const uploadInProgress = false;
+    this.setState({ uploadInProgress });
+  }
+
+  private handleAttachmentUploadFailed(error: AxiosError) {
+    //nginx returns a 300+ if there's an error
+    let uploadError = '';
+    const status = error.response.status;
+    if (status >= 500) {
+      uploadError = i18n.t('file_upload_failed_generic', 'File upload failed, please try again');
+    } else if (status === 413) {
+      uploadError = i18n.t('file_upload_failed_max_limit', 'Limit for file uploads is 25 MB');
+    } else {
+      uploadError = error.response.statusText;
+    }
+    this.setState({ uploadError });
+
+    const uploadInProgress = false;
+    this.setState({ uploadInProgress });
   }
 
   private handleAttachmentChanged(index: number, type: string, url: string) {
+    this.handleAttachmentUploading(false);
+
     let attachments: any = this.state.attachments;
     if (index === -1) {
       attachments = mutate(attachments, {
@@ -349,7 +369,11 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
       body: renderAttachments(
         this.context.config.endpoints.attachments,
         this.state.attachments,
+        this.state.uploadInProgress,
+        this.state.uploadError,
+        this.handleAttachmentUploading,
         this.handleAttachmentUploaded,
+        this.handleAttachmentUploadFailed,
         this.handleAttachmentChanged,
         this.handleAttachmentRemoved
       ),
@@ -362,7 +386,6 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
         <CheckboxElement
           name={i18n.t('forms.all_destinations', 'All Destinations')}
           title={i18n.t('forms.all_destinations', 'All Destinations')}
-          labelClassName={styles.checkbox}
           checked={this.state.sendAll}
           description={i18n.t(
             'forms.all_destinations_description',
@@ -380,8 +403,8 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
       const templates: Tab = {
         name: 'WhatsApp',
         body: this.renderTemplateConfig(),
-        checked: this.state.template.value != null,
-        hasErrors: !!this.state.templateVariables.find((entry: StringEntry) => hasErrors(entry))
+        checked: this.state.template !== null,
+        hasErrors: this.hasTemplateErrors()
       };
       tabs.splice(0, 0, templates);
     }
@@ -395,6 +418,8 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
       tabs.splice(0, 0, templates);
     }
 
+    tabs.reverse();
+
     return (
       <Dialog
         title={typeConfig.name}
@@ -404,6 +429,7 @@ export default class SendMsgForm extends React.Component<ActionFormProps, SendMs
       >
         <TypeList __className="" initialType={typeConfig} onChange={this.props.onTypeChange} />
         <TextInputElement
+          __className={styles.message}
           name={i18n.t('forms.message', 'Message')}
           showLabel={false}
           counter=".sms-counter"

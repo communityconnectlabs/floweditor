@@ -11,15 +11,14 @@ jobs:
     steps:
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
-        # Beta Release
-        uses: contributor-assistant/github-action@v2.2.0
+        uses: contributor-assistant/github-action@v2.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # the below token should have repo scope and must be manually added by you in the repository's secret
           PERSONAL_ACCESS_TOKEN : ${{ secrets.CLA_TOKEN }}
         with:
           path-to-signatures: 'signatures/version1/cla.json'
-          path-to-document: 'https://github.com/nyaruka/legal/blob/main/TextIt%20CLA.md' # e.g. a CLA or a DCO document
+          path-to-document: 'https://github.com/nyaruka/license/blob/main/TextIt_CLA.md' # e.g. a CLA or a DCO document
           branch: 'main'
           allowlist: bot*
           remote-organization-name: 'nyaruka'

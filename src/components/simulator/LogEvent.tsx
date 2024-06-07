@@ -7,7 +7,6 @@ import { Flow, Group, Label, Topic, Hint } from 'flowTypes';
 import * as React from 'react';
 import { createUUID, getURNPath } from 'utils';
 import i18n from 'config/i18n';
-import { Trans } from 'react-i18next';
 
 const MAP_THUMB = require('static/images/map.jpg');
 
@@ -58,7 +57,7 @@ export interface EventProps {
   resthook?: string;
   base_language?: string;
   language?: string;
-  translations?: { [lang: string]: { [text: string]: string } };
+  translations?: { [lang: string]: { text: string; attachments: string[] } };
   groups?: Group[];
   flow?: Flow;
   groups_added?: Group[];
@@ -70,7 +69,6 @@ export interface EventProps {
   urns?: string[];
   service?: string;
   classifier?: { uuid: string; name: string };
-  ticketer?: { uuid: string; name: string };
   ticket?: { topic: Topic; body: string };
   hint?: Hint;
   timeout_seconds?: number;
@@ -103,6 +101,14 @@ const getStyleForDirection = (direction: Direction): string => {
   return direction === Direction.MO ? styles.msg_received : styles.send_msg;
 };
 
+const renderWarning = (warning: string): JSX.Element => {
+  return (
+    <div className={styles.warning}>
+      <span>Warning: {warning}</span>
+    </div>
+  );
+};
+
 const renderError = (error: string): JSX.Element => {
   return (
     <div className={styles.error}>
@@ -111,10 +117,17 @@ const renderError = (error: string): JSX.Element => {
   );
 };
 
-const renderInfo = (info: string): JSX.Element => {
+const renderInfoStyles = (allStyles: any[]): string => {
+  return allStyles.join(' ');
+};
+
+const renderInfo = (info: string, extraStyles?: any[]): JSX.Element => {
   // localized text can have html entities, so this isn't as dangerous as it looks
+  const infoStyle = [styles.info];
+  const allStyles =
+    extraStyles && extraStyles.length > 0 ? [...infoStyle, ...extraStyles] : infoStyle;
   return (
-    <div key={info} className={styles.info}>
+    <div key={info} className={renderInfoStyles(allStyles)}>
       <span dangerouslySetInnerHTML={{ __html: info }} />
     </div>
   );
@@ -151,13 +164,7 @@ const renderAttachment = (attachment: string): JSX.Element => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div
-              className="fe-document-file-pdf"
-              style={{
-                textDecoration: 'none',
-                fontSize: '20px'
-              }}
-            />
+            <temba-icon name="pdf"></temba-icon>
             <div style={{ marginLeft: '5px', lineHeight: '16px' }}>
               {i18n.t('document', 'Document')}
             </div>
@@ -258,15 +265,24 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
 
   private renderEmailSent(): JSX.Element {
     const recipients = this.props.to || this.props.addresses;
+    const recipientValues = this.renderValueList(recipients);
+
+    const subject = this.props.subject;
+    const subjectValue = this.renderValue(subject);
+
+    const bodyValue = this.props.body;
+
+    const email_summary =
+      i18n.t('simulator.sent_email.sent_email_to', 'Sent email to') +
+      ' ' +
+      recipientValues +
+      ' ' +
+      i18n.t('simulator.sent_email.with_subject', 'with subject') +
+      ' ' +
+      subjectValue;
+
     return this.renderClickable(
-      <div className={styles.info + ' ' + styles.email}>
-        <Trans
-          i18nKey="simulator.sent_email.summary"
-          values={{ recipients: this.renderValueList(recipients), subject: this.props.subject }}
-        >
-          Sent email to [[recipients]] with subject "[[subject]]"
-        </Trans>
-      </div>,
+      renderInfo(email_summary, [styles.email]),
       <Dialog
         title={i18n.t('simulator.sent_email.title', 'Email Details')}
         headerClass={Types.send_email}
@@ -275,12 +291,12 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
       >
         <div className={styles.email_details}>
           <div className={styles.to}>
-            {i18n.t('email.to', 'To')}: {this.renderValueList(recipients)}
+            {i18n.t('email.to', 'To')}: {recipientValues}
           </div>
           <div className={styles.subject}>
-            {i18n.t('email.subject', 'Subject')}: {this.props.subject}
+            {i18n.t('email.subject', 'Subject')}: {subjectValue}
           </div>
-          <div className={styles.body}>{this.props.body}</div>
+          <div className={styles.body}>{bodyValue}</div>
         </div>
       </Dialog>
     );
@@ -374,6 +390,8 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
         return renderMessage(this.props.msg.text, this.props.msg.attachments, Direction.MT);
       case 'ivr_created':
         return renderMessage(this.props.msg.text, this.props.msg.attachments, Direction.MT);
+      case 'warning':
+        return renderWarning(this.props.text);
       case 'error':
         return renderError(this.props.text);
       case 'failure':
@@ -384,7 +402,7 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
         return this.renderGroupsChanged();
       case 'contact_urns_changed':
         return renderInfo('Added a URN for the contact');
-      case 'contact_field_changed':
+      case 'contact_field_changed': {
         const value = this.getValue(this.props.value);
         if (value !== '') {
           return renderInfo(
@@ -400,6 +418,7 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
             })
           );
         }
+      }
       case 'run_result_changed':
         return renderInfo(
           i18n.t('simulator.run_result_changed', 'Set result "[[field]]" to "[[value]]"', {
@@ -416,12 +435,10 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
       case 'email_created':
       case 'email_sent':
         return this.renderEmailSent();
-      case 'broadcast_created':
-        return renderMessage(
-          this.props.translations[this.props.base_language].text,
-          this.props.msg ? this.props.msg.attachments : [],
-          Direction.MT
-        );
+      case 'broadcast_created': {
+        const translation = this.props.translations[this.props.base_language];
+        return renderMessage(translation.text, translation.attachments, Direction.MT);
+      }
       case 'resthook_called':
         return renderInfo(
           i18n.t('simulator.resthook_called', 'Triggered flow event "[[resthook]]"', {
@@ -471,7 +488,7 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
             topic: this.props.ticket.topic.name
           })
         );
-      case 'airtime_transferred':
+      case 'airtime_transferred': {
         const event = this.props as AirtimeTransferEvent;
         return (
           <>
@@ -490,6 +507,7 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
             )}
           </>
         );
+      }
     }
 
     // should only get here if we are get an unexpected event
@@ -512,6 +530,9 @@ export default class LogEvent extends React.Component<EventProps, LogEventState>
       delim = ', ';
     });
     return text;
+  }
+  private renderValue(value: string): string {
+    return `"${value}"`;
   }
 
   /**

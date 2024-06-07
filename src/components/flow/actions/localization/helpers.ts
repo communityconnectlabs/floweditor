@@ -3,7 +3,7 @@ import { MsgLocalizationFormState } from 'components/flow/actions/localization/M
 import { Types } from 'config/interfaces';
 import { getTypeConfig } from 'config/typeConfigs';
 import { NodeEditorSettings, StringEntry } from 'store/nodeEditor';
-import { SendMsg, MsgTemplating, SayMsg } from 'flowTypes';
+import { SendMsg, SayMsg } from 'flowTypes';
 import { Attachment } from '../sendmsg/attachments';
 
 export const initializeLocalizedKeyForm = (
@@ -30,11 +30,13 @@ export const initializeLocalizedForm = (settings: NodeEditorSettings): MsgLocali
   const state: MsgLocalizationFormState = {
     message: { value: '' },
     quickReplies: { value: [] },
+    template: null,
     templateVariables: [],
-    templating: null,
     audio: { value: null },
     valid: true,
-    attachments: []
+    attachments: [],
+    uploadInProgress: false,
+    uploadError: ''
   };
 
   // check if our form should use a localized action
@@ -45,19 +47,13 @@ export const initializeLocalizedForm = (settings: NodeEditorSettings): MsgLocali
     settings.localizations &&
     settings.localizations.length > 0
   ) {
-    if (settings.originalAction && (settings.originalAction as any).templating) {
-      state.templating = (settings.originalAction as any).templating;
-      state.templateVariables = state.templating.variables.map((value: string) => {
-        return {
-          value: ''
-        };
-      });
+    if (settings.originalAction && (settings.originalAction as any).template) {
+      state.template = (settings.originalAction as any).template;
     }
 
     for (const localized of settings.localizations) {
       if (localized.isLocalized()) {
         const localizedObject = localized.getObject() as any;
-
         if (localizedObject.text) {
           const action = localizedObject as (SendMsg & SayMsg);
           state.message.value = 'text' in localized.localizedKeys ? action.text : '';
@@ -82,17 +78,11 @@ export const initializeLocalizedForm = (settings: NodeEditorSettings): MsgLocali
             });
           }
 
-          state.attachments = attachments;
-          state.valid = true;
-        }
+          if ('template_variables' in localized.localizedKeys) {
+            state.templateVariables = action.template_variables || [];
+          }
 
-        if (localizedObject.variables) {
-          const templating = localizedObject as MsgTemplating;
-          state.templateVariables = templating.variables.map((value: string) => {
-            return {
-              value: 'variables' in localized.localizedKeys ? value : ''
-            };
-          });
+          state.attachments = attachments;
           state.valid = true;
         }
       }

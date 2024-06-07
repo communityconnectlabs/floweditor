@@ -18,58 +18,15 @@ exports[`SendMsgForm render should render 1`] = `
   tabs={
     Array [
       Object {
-        "body": <React.Fragment>
-          <p>
-            Sending messages over a WhatsApp channel requires that a template be used if you have not received a message from a contact in the last 24 hours. Setting a template to use over WhatsApp is especially important for the first message in your flow.
-          </p>
-          <AssetSelector
-            entry={
-              Object {
-                "value": null,
-              }
-            }
-            formClearable={true}
-            name="template"
-            noOptionsMessage="No templates found"
-            onChange={[Function]}
-            searchable={true}
-            shouldExclude={[Function]}
-          />
-        </React.Fragment>,
+        "body": <CheckboxElement
+          checked={false}
+          description="Send a message to all destinations known for this contact. If you aren't sure what this means, leave it unchecked."
+          name="All Destinations"
+          onChange={[Function]}
+          title="All Destinations"
+        />,
         "checked": false,
-        "hasErrors": false,
-        "name": "WhatsApp",
-      },
-      Object {
-        "body": <React.Fragment>
-          <p>
-            Quick Replies are made into buttons for supported channels. For example, when asking a question, you might add a Quick Reply for "Yes" and one for "No".
-          </p>
-          <MultiChoiceInput
-            entry={
-              Object {
-                "value": "",
-              }
-            }
-            helpText={
-              <Trans
-                i18nKey="forms.add_quick_reply"
-              >
-                Add a new Quick Reply and press enter.
-              </Trans>
-            }
-            items={
-              Object {
-                "value": Array [],
-              }
-            }
-            name="Quick Reply"
-            onChange={[Function]}
-          />
-        </React.Fragment>,
-        "checked": false,
-        "hasErrors": false,
-        "name": "Quick Replies",
+        "name": "Advanced",
       },
       Object {
         "body": <React.Fragment>
@@ -133,16 +90,58 @@ exports[`SendMsgForm render should render 1`] = `
         "name": "Attachments",
       },
       Object {
-        "body": <CheckboxElement
-          checked={false}
-          description="Send a message to all destinations known for this contact. If you aren't sure what this means, leave it unchecked."
-          labelClassName="checkbox"
-          name="All Destinations"
-          onChange={[Function]}
-          title="All Destinations"
-        />,
+        "body": <React.Fragment>
+          <p>
+            Quick Replies are made into buttons for supported channels. For example, when asking a question, you might add a Quick Reply for "Yes" and one for "No".
+          </p>
+          <MultiChoiceInput
+            entry={
+              Object {
+                "value": "",
+              }
+            }
+            helpText={
+              <Trans
+                i18nKey="forms.add_quick_reply"
+              >
+                Add a new Quick Reply and press enter.
+              </Trans>
+            }
+            items={
+              Object {
+                "value": Array [],
+              }
+            }
+            name="Quick Reply"
+            onChange={[Function]}
+          />
+        </React.Fragment>,
         "checked": false,
-        "name": "Advanced",
+        "hasErrors": false,
+        "name": "Quick Replies",
+      },
+      Object {
+        "body": <React.Fragment>
+          <p>
+            Sending messages over a WhatsApp channel requires that a template be used if you have not received a message from a contact in the last 24 hours. Setting a template to use over WhatsApp is especially important for the first message in your flow.
+          </p>
+          <TembaComponent
+            eventHandlers={
+              Object {
+                "temba-content-changed": [Function],
+                "temba-context-changed": [Function],
+              }
+            }
+            lang={null}
+            tag="temba-template-editor"
+            template={null}
+            url="assets/templates.json"
+            variables="[]"
+          />
+        </React.Fragment>,
+        "checked": false,
+        "hasErrors": false,
+        "name": "WhatsApp",
       },
     ]
   }
@@ -159,7 +158,7 @@ exports[`SendMsgForm render should render 1`] = `
         "localizeableKeys": Array [
           "text",
           "quick_replies",
-          "templating.variables",
+          "template_variables",
         ],
         "massageForDisplay": [Function],
         "name": "Send Message",
@@ -169,6 +168,7 @@ exports[`SendMsgForm render should render 1`] = `
     onChange={[MockFunction]}
   />
   <TextInputElement
+    __className="message"
     autocomplete={true}
     counter=".sms-counter"
     entry={
@@ -196,7 +196,7 @@ Array [
     "quick_replies": Array [],
     "text": "What is your favorite color?",
     "type": "send_msg",
-    "uuid": "70ac6ea6-803a-4c33-81c7-dc26803c313f",
+    "uuid": "b1f332f3-bdd3-4891-aec5-1843a712dbf1",
   },
 ]
 `;
@@ -220,13 +220,13 @@ Object {
     "value": "",
   },
   "sendAll": true,
-  "template": Object {
-    "value": null,
-  },
+  "template": null,
   "templateVariables": Array [],
   "topic": Object {
     "value": undefined,
   },
+  "uploadError": "",
+  "uploadInProgress": false,
   "valid": true,
 }
 `;

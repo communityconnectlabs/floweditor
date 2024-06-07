@@ -1,12 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { getActionUUID } from 'components/flow/actions/helpers';
 import { SendMsgFormState } from 'components/flow/actions/sendmsg/SendMsgForm';
 import { Types } from 'config/interfaces';
-import { MsgTemplating, SendMsg } from 'flowTypes';
-import { AssetStore } from 'store/flowContext';
-import { FormEntry, NodeEditorSettings, StringEntry } from 'store/nodeEditor';
+import { SendMsg } from 'flowTypes';
+import { NodeEditorSettings } from 'store/nodeEditor';
 import { SelectOption } from 'components/form/select/SelectElement';
-import { createUUID } from 'utils';
 import { Attachment } from './attachments';
 
 export const TOPIC_OPTIONS: SelectOption[] = [
@@ -16,16 +15,19 @@ export const TOPIC_OPTIONS: SelectOption[] = [
   { value: 'agent', name: 'Agent' }
 ];
 
-export const initializeForm = (
-  settings: NodeEditorSettings,
-  assetStore: AssetStore
-): SendMsgFormState => {
-  let template: FormEntry = { value: null };
-  let templateVariables: StringEntry[] = [];
+export const initializeForm = (settings: NodeEditorSettings): SendMsgFormState => {
+  let template: { uuid: string; name: string } = null;
+  let templateVariables: string[] = [];
 
   if (settings.originalAction && settings.originalAction.type === Types.send_msg) {
     const action = settings.originalAction as SendMsg;
     const attachments: Attachment[] = [];
+
+    if (action.template) {
+      template = action.template;
+      templateVariables = action.template_variables || [];
+    }
+
     (action.attachments || []).forEach((attachmentString: string) => {
       const splitPoint = attachmentString.indexOf(':');
 
@@ -39,26 +41,13 @@ export const initializeForm = (
       attachments.push(attachment);
     });
 
-    if (action.templating) {
-      const msgTemplate = action.templating.template;
-      template = {
-        value: {
-          uuid: msgTemplate.uuid,
-          name: msgTemplate.name
-        }
-      };
-      templateVariables = action.templating.variables.map((value: string) => {
-        return {
-          value
-        };
-      });
-    }
-
     return {
       topic: { value: TOPIC_OPTIONS.find(option => option.value === action.topic) },
       template,
       templateVariables,
       attachments,
+      uploadInProgress: false,
+      uploadError: '',
       message: { value: action.text },
       quickReplies: { value: action.quick_replies || [] },
       quickReplyEntry: { value: '' },
@@ -70,8 +59,10 @@ export const initializeForm = (
   return {
     topic: { value: null },
     template,
-    templateVariables: [],
+    templateVariables,
     attachments: [],
+    uploadInProgress: false,
+    uploadError: '',
     message: { value: '' },
     quickReplies: { value: [] },
     quickReplyEntry: { value: '' },
@@ -85,31 +76,6 @@ export const stateToAction = (settings: NodeEditorSettings, state: SendMsgFormSt
     .filter((attachment: Attachment) => attachment.url.trim().length > 0)
     .map((attachment: Attachment) => `${attachment.type}:${attachment.url}`);
 
-  let templating: MsgTemplating = null;
-
-  if (state.template && state.template.value) {
-    let templatingUUID = createUUID();
-    if (settings.originalAction && settings.originalAction.type === Types.send_msg) {
-      const action = settings.originalAction as SendMsg;
-      if (
-        action.templating &&
-        action.templating.template &&
-        action.templating.template.uuid === state.template.value.id
-      ) {
-        templatingUUID = action.templating.uuid;
-      }
-    }
-
-    templating = {
-      uuid: templatingUUID,
-      template: {
-        uuid: state.template.value.uuid,
-        name: state.template.value.name
-      },
-      variables: state.templateVariables.map((variable: StringEntry) => variable.value)
-    };
-  }
-
   const result: SendMsg = {
     attachments,
     text: state.message.value,
@@ -119,8 +85,9 @@ export const stateToAction = (settings: NodeEditorSettings, state: SendMsgFormSt
     uuid: getActionUUID(settings, Types.send_msg)
   };
 
-  if (templating) {
-    result.templating = templating;
+  if (state.template) {
+    result.template = state.template;
+    result.template_variables = state.templateVariables;
   }
 
   if (state.topic.value) {

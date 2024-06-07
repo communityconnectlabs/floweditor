@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { react as bindCallbacks } from 'auto-bind';
 import Dialog, { ButtonSet, Tab } from 'components/dialog/Dialog';
 import styles from 'components/flow/actions/action/Action.module.scss';
@@ -7,7 +9,7 @@ import MultiChoiceInput from 'components/form/multichoice/MultiChoice';
 import TextInputElement from 'components/form/textinput/TextInputElement';
 import UploadButton from 'components/uploadbutton/UploadButton';
 import { fakePropType } from 'config/ConfigProvider';
-import { SendMsg, MsgTemplating } from 'flowTypes';
+import { SendMsg } from 'flowTypes';
 import * as React from 'react';
 import mutate from 'immutability-helper';
 import { FormState, mergeForm, StringArrayEntry, StringEntry } from 'store/nodeEditor';
@@ -16,18 +18,20 @@ import { MaxOfTenItems, validate } from 'store/validators';
 import { initializeLocalizedForm } from './helpers';
 import i18n from 'config/i18n';
 import { Trans } from 'react-i18next';
-import { range } from 'utils';
 import { renderIssues } from '../helpers';
 import { Attachment, renderAttachments } from '../sendmsg/attachments';
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
+import { TembaComponent } from 'temba/TembaComponent';
 
 export interface MsgLocalizationFormState extends FormState {
   message: StringEntry;
   quickReplies: StringArrayEntry;
   audio: StringEntry;
-  templateVariables: StringEntry[];
-  templating: MsgTemplating;
+  template?: { uuid: string; name: string };
+  templateVariables: string[];
   attachments: Attachment[];
+  uploadInProgress: boolean;
+  uploadError: string;
 }
 
 export default class MsgLocalizationForm extends React.Component<
@@ -89,7 +93,7 @@ export default class MsgLocalizationForm extends React.Component<
   }
 
   private handleSave(): void {
-    const { message: text, quickReplies, audio, templateVariables, attachments } = this.state;
+    const { message: text, quickReplies, audio, attachments, templateVariables } = this.state;
 
     // make sure we are valid for saving, only quick replies can be invalid
     const typeConfig = determineTypeConfig(this.props.nodeSettings);
@@ -116,24 +120,16 @@ export default class MsgLocalizationForm extends React.Component<
         translations.audio_url = audio.value;
       }
 
+      if (templateVariables) {
+        translations.template_variables = templateVariables;
+      }
+
       const localizations = [
         {
           uuid: this.props.nodeSettings.originalAction!.uuid,
           translations
         }
       ];
-
-      // if we have template variables, they show up on their own key
-      const hasTemplateVariables = templateVariables.find(
-        (entry: StringEntry) => entry.value.length > 0
-      );
-      if (hasTemplateVariables) {
-        localizations.push({
-          uuid: this.state.templating.uuid,
-          translations: { variables: templateVariables.map((entry: StringEntry) => entry.value) }
-        });
-      }
-
       this.props.updateLocalizations(this.props.language.id, localizations);
 
       // notify our modal we are done
@@ -155,24 +151,65 @@ export default class MsgLocalizationForm extends React.Component<
     this.handleUpdate({ quickReplies });
   }
 
-  private handleTemplateVariableChanged(updatedText: string, num: number): void {
-    const entry = validate(`Variable ${num + 1}`, updatedText, []);
+  private handleTemplateVariableChanged(event: any): void {
+    this.setState({ templateVariables: event.detail.variables });
+  }
 
-    const templateVariables = mutate(this.state.templateVariables, {
-      $merge: { [num]: entry }
-    }) as StringEntry[];
+  private handleAttachmentUploading(isUploading: boolean) {
+    const uploadError = '';
+    console.log(uploadError);
+    this.setState({ uploadError });
 
-    this.setState({ templateVariables });
+    if (isUploading) {
+      const uploadInProgress = true;
+      this.setState({ uploadInProgress });
+    } else {
+      const uploadInProgress = false;
+      this.setState({ uploadInProgress });
+    }
   }
 
   private handleAttachmentUploaded(response: AxiosResponse) {
-    const attachments: any = mutate(this.state.attachments, {
-      $push: [{ type: response.data.type, url: response.data.url, uploaded: true }]
-    });
-    this.setState({ attachments });
+    //django returns a 200 even when there's an error
+    if (response.data && response.data.error) {
+      const uploadError: string = response.data.error;
+      console.log(uploadError);
+      this.setState({ uploadError });
+    } else {
+      const attachments: any = mutate(this.state.attachments, {
+        $push: [{ type: response.data.type, url: response.data.url, uploaded: true }]
+      });
+      this.setState({ attachments });
+
+      const uploadError = '';
+      console.log(uploadError);
+      this.setState({ uploadError });
+    }
+
+    const uploadInProgress = false;
+    this.setState({ uploadInProgress });
+  }
+
+  private handleAttachmentUploadFailed(error: AxiosError) {
+    //nginx returns a 300+ if there's an error
+    let uploadError = '';
+    const status = error.response.status;
+    if (status >= 500) {
+      uploadError = i18n.t('file_upload_failed_generic', 'File upload failed, please try again');
+    } else if (status === 413) {
+      uploadError = i18n.t('file_upload_failed_max_limit', 'Limit for file uploads is 25 MB');
+    } else {
+      uploadError = error.response.statusText;
+    }
+    this.setState({ uploadError });
+
+    const uploadInProgress = false;
+    this.setState({ uploadInProgress });
   }
 
   private handleAttachmentChanged(index: number, type: string, url: string) {
+    this.handleAttachmentUploading(false);
+
     let attachments: any = this.state.attachments;
     if (index === -1) {
       attachments = mutate(attachments, {
@@ -200,67 +237,6 @@ export default class MsgLocalizationForm extends React.Component<
     const typeConfig = determineTypeConfig(this.props.nodeSettings);
     const tabs: Tab[] = [];
 
-    if (
-      this.state.templating &&
-      typeConfig.localizeableKeys!.indexOf('templating.variables') > -1
-    ) {
-      const hasLocalizedValue = !!this.state.templateVariables.find(
-        (entry: StringEntry) => entry.value.length > 0
-      );
-
-      const variable = i18n.t('forms.variable', 'Variable');
-
-      tabs.push({
-        name: 'WhatsApp',
-        body: (
-          <>
-            <p>
-              {i18n.t(
-                'forms.whatsapp_warning',
-                'Sending messages over a WhatsApp channel requires that a template be used if you have not received a message from a contact in the last 24 hours. Setting a template to use over WhatsApp is especially important for the first message in your flow.'
-              )}
-            </p>
-            {this.state.templating && this.state.templating.variables.length > 0 ? (
-              <>
-                {range(0, this.state.templating.variables.length).map((num: number) => {
-                  const entry = this.state.templateVariables[num] || { value: '' };
-                  return (
-                    <div className={styles.variable} key={'tr_arg_' + num}>
-                      <TextInputElement
-                        name={`${i18n.t('forms.variable', 'Variable')} ${num + 1}`}
-                        showLabel={false}
-                        placeholder={`${this.props.language.name} ${variable} ${num + 1}`}
-                        onChange={(updatedText: string) => {
-                          this.handleTemplateVariableChanged(updatedText, num);
-                        }}
-                        entry={entry}
-                        autocomplete={true}
-                      />
-                    </div>
-                  );
-                })}
-              </>
-            ) : null}
-          </>
-        ),
-        checked: hasLocalizedValue
-      });
-    }
-
-    if (typeConfig.localizeableKeys!.indexOf('quick_replies') > -1) {
-      tabs.push({
-        name: i18n.t('forms.attachments', 'Attachments'),
-        body: renderAttachments(
-          this.context.config.endpoints.attachments,
-          this.state.attachments,
-          this.handleAttachmentUploaded,
-          this.handleAttachmentChanged,
-          this.handleAttachmentRemoved
-        ),
-        checked: this.state.attachments.length > 0
-      });
-    }
-
     if (typeConfig.localizeableKeys!.indexOf('quick_replies') > -1) {
       tabs.push({
         name: i18n.t('forms.quick_replies', 'Quick Replies'),
@@ -285,11 +261,29 @@ export default class MsgLocalizationForm extends React.Component<
       });
     }
 
+    if (typeConfig.localizeableKeys!.indexOf('quick_replies') > -1) {
+      tabs.push({
+        name: i18n.t('forms.attachments', 'Attachments'),
+        body: renderAttachments(
+          this.context.config.endpoints.attachments,
+          this.state.attachments,
+          this.state.uploadInProgress,
+          this.state.uploadError,
+          this.handleAttachmentUploading,
+          this.handleAttachmentUploaded,
+          this.handleAttachmentUploadFailed,
+          this.handleAttachmentChanged,
+          this.handleAttachmentRemoved
+        ),
+        checked: this.state.attachments.length > 0
+      });
+    }
+
     let audioButton: JSX.Element | null = null;
     if (typeConfig.localizeableKeys!.indexOf('audio_url') > 0) {
       audioButton = (
         <UploadButton
-          icon="fe-mic"
+          icon="recording"
           uploadText="Upload Recording"
           removeText="Remove Recording"
           url={this.state.audio.value}
@@ -299,8 +293,37 @@ export default class MsgLocalizationForm extends React.Component<
       );
     }
 
-    const translation = i18n.t('forms.translation', 'Translation');
+    if (this.state.template) {
+      tabs.push({
+        name: 'WhatsApp',
+        body: (
+          <>
+            <p>
+              {i18n.t(
+                'forms.whatsapp_warning',
+                'Sending messages over a WhatsApp channel requires that a template be used if you have not received a message from a contact in the last 24 hours. Setting a template to use over WhatsApp is especially important for the first message in your flow.'
+              )}
+            </p>
+            {this.state.template ? (
+              <TembaComponent
+                tag="temba-template-editor"
+                eventHandlers={{
+                  'temba-content-changed': this.handleTemplateVariableChanged
+                }}
+                template={this.state.template.uuid}
+                url={this.props.assetStore.templates.endpoint}
+                lang={this.props.language.id}
+                variables={JSON.stringify(this.state.templateVariables)}
+                translating={true}
+              ></TembaComponent>
+            ) : null}
+          </>
+        ),
+        checked: this.state.templateVariables.length > 0
+      });
+    }
 
+    const translation = i18n.t('forms.translation', 'Translation');
     return (
       <Dialog
         title={typeConfig.name}

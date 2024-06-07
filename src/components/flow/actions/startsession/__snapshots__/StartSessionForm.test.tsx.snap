@@ -13,13 +13,29 @@ exports[`StartSessionForm render should render 1`] = `
           class="title_container"
         >
           <div
-            class="title"
+            style="flex-grow: 1;"
           >
-            Start Somebody Else
+            <div
+              class="title"
+            >
+              Start Somebody Else
+            </div>
+            <div
+              class="subtitle"
+            />
           </div>
           <div
-            class="subtitle"
-          />
+            class="tabs"
+          >
+            <div
+              class="tab "
+              style="display: flex;"
+            >
+              <div>
+                Advanced
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -87,7 +103,6 @@ exports[`StartSessionForm render should render 1`] = `
                   name="Recipients"
                   namekey="name"
                   placeholder="Select who should be started in the flow"
-                  queryparam="search"
                   searchable="true"
                   valuekey="uuid"
                   values="[{\\"id\\":\\"2dc85899-0577-4f1b-a620-f12094e34b5e\\",\\"name\\":\\"Cat Fanciers\\",\\"type\\":\\"group\\"},{\\"id\\":\\"42ebf1d0-a43e-4ba6-9577-c863b20c88c4\\",\\"name\\":\\"Norbert Kwizera\\",\\"type\\":\\"contact\\",\\"missing\\":false},{\\"id\\":\\"70ac6ea6-803a-4c33-81c7-dc26803c313f\\",\\"name\\":\\"Rowan Seymour\\",\\"type\\":\\"contact\\",\\"missing\\":false}]"
@@ -129,15 +144,23 @@ exports[`StartSessionForm render should render 1`] = `
           >
             <div
               class="btn secondary  "
-              style="margin-left: 0px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 0px; margin-top: 0px;"
             >
-              Cancel
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Cancel
+              </div>
             </div>
             <div
               class="btn primary  "
-              style="margin-left: 10px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 10px; margin-top: 0px;"
             >
-              Ok
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Ok
+              </div>
             </div>
           </div>
         </div>
@@ -151,6 +174,9 @@ exports[`StartSessionForm render should render an empty form with no action 1`] 
 Object {
   "contactQuery": Object {
     "value": "",
+  },
+  "exclusions": Object {
+    "in_a_flow": false,
   },
   "flow": Object {
     "value": null,
@@ -183,6 +209,21 @@ exports[`StartSessionForm render should render an empty form with no action 2`] 
     }
   }
   headerClass="start_session"
+  tabs={
+    Array [
+      Object {
+        "body": <CheckboxElement
+          checked={false}
+          description="Avoid interrupting a contact who is already in a flow."
+          name="Skip contacts currently in a flow"
+          onChange={[Function]}
+          title="Skip contacts currently in a flow"
+        />,
+        "checked": false,
+        "name": "Advanced",
+      },
+    ]
+  }
   title="Start Somebody Else"
 >
   <TypeList
@@ -244,12 +285,6 @@ exports[`StartSessionForm render should render an empty form with no action 2`] 
       data-testid="recipients"
     >
       <AssetSelector
-        assets={
-          Object {
-            "items": Object {},
-            "type": "contact",
-          }
-        }
         entry={
           Object {
             "value": Array [],
@@ -298,13 +333,29 @@ exports[`StartSessionForm render should render contact query 1`] = `
           class="title_container"
         >
           <div
-            class="title"
+            style="flex-grow: 1;"
           >
-            Start Somebody Else
+            <div
+              class="title"
+            >
+              Start Somebody Else
+            </div>
+            <div
+              class="subtitle"
+            />
           </div>
           <div
-            class="subtitle"
-          />
+            class="tabs"
+          >
+            <div
+              class="tab "
+              style="display: flex;"
+            >
+              <div>
+                Advanced
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -410,15 +461,23 @@ exports[`StartSessionForm render should render contact query 1`] = `
           >
             <div
               class="btn secondary  "
-              style="margin-left: 0px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 0px; margin-top: 0px;"
             >
-              Cancel
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Cancel
+              </div>
             </div>
             <div
               class="btn primary  "
-              style="margin-left: 10px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 10px; margin-top: 0px;"
             >
-              Ok
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Ok
+              </div>
             </div>
           </div>
         </div>
@@ -434,6 +493,9 @@ Array [
     "contact_query": "my_field > 6",
     "contacts": Array [],
     "create_contact": false,
+    "exclusions": Object {
+      "in_a_flow": false,
+    },
     "flow": Object {
       "name": "Flow to Start",
       "uuid": "flow_uuid",
@@ -459,13 +521,29 @@ exports[`StartSessionForm render should render create new contacts 1`] = `
           class="title_container"
         >
           <div
-            class="title"
+            style="flex-grow: 1;"
           >
-            Start Somebody Else
+            <div
+              class="title"
+            >
+              Start Somebody Else
+            </div>
+            <div
+              class="subtitle"
+            />
           </div>
           <div
-            class="subtitle"
-          />
+            class="tabs"
+          >
+            <div
+              class="tab "
+              style="display: flex;"
+            >
+              <div>
+                Advanced
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -548,15 +626,23 @@ exports[`StartSessionForm render should render create new contacts 1`] = `
           >
             <div
               class="btn secondary  "
-              style="margin-left: 0px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 0px; margin-top: 0px;"
             >
-              Cancel
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Cancel
+              </div>
             </div>
             <div
               class="btn primary  "
-              style="margin-left: 10px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 10px; margin-top: 0px;"
             >
-              Ok
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Ok
+              </div>
             </div>
           </div>
         </div>
@@ -581,6 +667,21 @@ exports[`StartSessionForm render should render self, children with base props 1`
     }
   }
   headerClass="start_session"
+  tabs={
+    Array [
+      Object {
+        "body": <CheckboxElement
+          checked={false}
+          description="Avoid interrupting a contact who is already in a flow."
+          name="Skip contacts currently in a flow"
+          onChange={[Function]}
+          title="Skip contacts currently in a flow"
+        />,
+        "checked": false,
+        "name": "Advanced",
+      },
+    ]
+  }
   title="Start Somebody Else"
 >
   <TypeList
@@ -642,12 +743,6 @@ exports[`StartSessionForm render should render self, children with base props 1`
       data-testid="recipients"
     >
       <AssetSelector
-        assets={
-          Object {
-            "items": Object {},
-            "type": "contact",
-          }
-        }
         entry={
           Object {
             "value": Array [
@@ -717,13 +812,29 @@ exports[`StartSessionForm render should warn about invalid fields in contact que
           class="title_container"
         >
           <div
-            class="title"
+            style="flex-grow: 1;"
           >
-            Start Somebody Else
+            <div
+              class="title"
+            >
+              Start Somebody Else
+            </div>
+            <div
+              class="subtitle"
+            />
           </div>
           <div
-            class="subtitle"
-          />
+            class="tabs"
+          >
+            <div
+              class="tab "
+              style="display: flex;"
+            >
+              <div>
+                Advanced
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -829,15 +940,23 @@ exports[`StartSessionForm render should warn about invalid fields in contact que
           >
             <div
               class="btn secondary  "
-              style="margin-left: 0px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 0px; margin-top: 0px;"
             >
-              Cancel
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Cancel
+              </div>
             </div>
             <div
               class="btn primary  "
-              style="margin-left: 10px; margin-top: 0px;"
+              style="display: inline-flex; margin-left: 10px; margin-top: 0px;"
             >
-              Ok
+              <div
+                style="margin-bottom: 0px;"
+              >
+                Ok
+              </div>
             </div>
           </div>
         </div>
@@ -852,6 +971,9 @@ Array [
   Object {
     "contacts": Array [],
     "create_contact": false,
+    "exclusions": Object {
+      "in_a_flow": false,
+    },
     "flow": Object {
       "name": "My Flow",
       "uuid": undefined,
@@ -868,6 +990,9 @@ exports[`StartSessionForm updates should save changes 1`] = `
 Object {
   "contactQuery": Object {
     "value": "",
+  },
+  "exclusions": Object {
+    "in_a_flow": false,
   },
   "flow": Object {
     "validationFailures": Array [],
@@ -901,6 +1026,9 @@ Array [
   Object {
     "contacts": Array [],
     "create_contact": false,
+    "exclusions": Object {
+      "in_a_flow": false,
+    },
     "flow": Object {
       "name": "My Flow",
       "uuid": undefined,

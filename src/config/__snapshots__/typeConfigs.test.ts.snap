@@ -84,7 +84,7 @@ Array [
     "localizeableKeys": Array [
       "text",
       "quick_replies",
-      "templating.variables",
+      "template_variables",
     ],
     "massageForDisplay": [Function],
     "name": "Send Message",
@@ -274,7 +274,6 @@ Array [
     ],
     "component": [Function],
     "description": "Open a ticket with a human agent",
-    "filter": "ticketer",
     "form": [Function],
     "localization": [Function],
     "localizeableKeys": Array [
@@ -433,6 +432,14 @@ Array [
     "name": "Split by URN Type",
     "type": "split_by_scheme",
   },
+  Object {
+    "component": [Function],
+    "description": "Send an opt-in request",
+    "filter": "optins",
+    "form": [Function],
+    "name": "Request Opt-In",
+    "type": "request_optin",
+  },
 ]
 `;
 
@@ -552,7 +559,6 @@ Object {
     ],
     "component": [Function],
     "description": "Open a ticket with a human agent",
-    "filter": "ticketer",
     "form": [Function],
     "localization": [Function],
     "localizeableKeys": Array [
@@ -582,6 +588,14 @@ Object {
     "form": [Function],
     "name": "Remove from Group",
     "type": "remove_contact_groups",
+  },
+  "request_optin": Object {
+    "component": [Function],
+    "description": "Send an opt-in request",
+    "filter": "optins",
+    "form": [Function],
+    "name": "Request Opt-In",
+    "type": "request_optin",
   },
   "say_msg": Object {
     "component": [Function],
@@ -634,7 +648,7 @@ Object {
     "localizeableKeys": Array [
       "text",
       "quick_replies",
-      "templating.variables",
+      "template_variables",
     ],
     "massageForDisplay": [Function],
     "name": "Send Message",
@@ -872,7 +886,6 @@ Object {
     ],
     "component": [Function],
     "description": "Open a ticket with a human agent",
-    "filter": "ticketer",
     "form": [Function],
     "localization": [Function],
     "localizeableKeys": Array [

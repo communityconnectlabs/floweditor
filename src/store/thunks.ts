@@ -23,7 +23,13 @@ import {
 } from 'flowTypes';
 import mutate from 'immutability-helper';
 import { Dispatch } from 'redux';
-import { CanvasPositions, EditorState, EMPTY_DRAG_STATE, updateEditorState } from 'store/editor';
+import {
+  CanvasPositions,
+  EditorState,
+  EMPTY_DRAG_STATE,
+  initialState,
+  updateEditorState
+} from 'store/editor';
 import {
   Asset,
   AssetStore,
@@ -36,7 +42,8 @@ import {
   updateDefinition,
   updateNodes,
   updateMetadata,
-  updateIssues
+  updateIssues,
+  initialState as flowContext
 } from 'store/flowContext';
 import {
   createEmptyNode,
@@ -102,6 +109,8 @@ export type FetchFlow = (
 
 export type LoadFlowDefinition = (details: FlowDetails, assetStore: AssetStore) => Thunk<void>;
 
+export type Reset = () => Thunk<void>;
+
 export type CreateNewRevision = () => Thunk<void>;
 
 export type NoParamsAC = () => Thunk<void>;
@@ -114,6 +123,8 @@ export type OnUpdateLocalizations = (
   language: string,
   changes: LocalizationUpdates
 ) => Thunk<FlowDefinition>;
+
+export type OnRemoveLocalizations = (uuid: string, keys?: string[]) => Thunk<FlowDefinition>;
 
 export type UpdateSticky = (stickyUUID: string, sticky: StickyNote) => Thunk<void>;
 
@@ -292,12 +303,17 @@ export const createNewRevision = () => (dispatch: DispatchWithState, getState: G
   markDirty(0);
 };
 
+export const reset = () => (dispatch: DispatchWithState): void => {
+  dispatch(updateDefinition(flowContext.definition));
+  dispatch(updateNodes(flowContext.nodes));
+  dispatch(updateMetadata(flowContext.metadata));
+};
+
 export const loadFlowDefinition = (details: FlowDetails, assetStore: AssetStore) => (
   dispatch: DispatchWithState,
   getState: GetState
 ): void => {
   // first see if we need our asset store initialized
-
   const definition = details.definition;
 
   const {
@@ -378,17 +394,18 @@ export const fetchFlow = (endpoints: Endpoints, uuid: string, forceSave = false)
   dispatch: DispatchWithState,
   getState: GetState
 ) => {
+  const state = initialState;
+  state.fetchingFlow = true;
+
   // mark us as underway
-  dispatch(mergeEditorState({ fetchingFlow: true }));
+  dispatch(mergeEditorState(state));
 
   // first see if we need our asset store initialized
   let {
     flowContext: { assetStore }
   } = getState();
 
-  if (!Object.keys(assetStore).length) {
-    assetStore = await createAssetStore(endpoints);
-  }
+  assetStore = await createAssetStore(endpoints);
 
   fetchFlowActivity(endpoints.activity, dispatch, getState, uuid);
   (window as any).triggerActivityUpdate = () => {
@@ -397,11 +414,9 @@ export const fetchFlow = (endpoints: Endpoints, uuid: string, forceSave = false)
 
   getFlowDetails(assetStore.revisions)
     .then((response: any) => {
-      // backwards compatibitly for during deployment
-      const obj = JSON.parse(response);
-      const details: FlowDetails = obj.definition
-        ? obj
-        : { definition: obj as FlowDefinition, metadata: { issues: [] } };
+      const details: FlowDetails = response.definition
+        ? response
+        : { definition: response as FlowDefinition, metadata: { issues: [] } };
 
       dispatch(loadFlowDefinition(details, assetStore));
       dispatch(
@@ -465,6 +480,19 @@ export const handleLanguageChange: HandleLanguageChange = language => (dispatch,
   if (!isEqual(language, currentLanguage)) {
     dispatch(mergeEditorState({ language }));
   }
+};
+
+export const onRemoveLocalizations = (uuid: string, keys?: string[]) => (
+  dispatch: DispatchWithState,
+  getState: GetState
+): FlowDefinition => {
+  const {
+    flowContext: { definition }
+  } = getState();
+  const updated = mutators.removeLocalizations(definition, uuid, keys);
+  dispatch(updateDefinition(updated));
+  markDirty();
+  return updated;
 };
 
 export const onUpdateLocalizations = (language: string, changes: LocalizationUpdates) => (
@@ -1010,6 +1038,7 @@ export const onUpdateRouter = (renderNode: RenderNode) => (
       );
     }
 
+    renderNode.node = mutators.uniquifyNode(renderNode.node);
     // didn't recognize that action, let's add a new router node
     // if we are appendeng in, see if we need to route through
     const switchRouter = getSwitchRouter(renderNode.node);
@@ -1022,12 +1051,17 @@ export const onUpdateRouter = (renderNode: RenderNode) => (
       );
 
       exitToUpdate.destination_uuid = originalNode.node.exits[0].destination_uuid;
+      if (exitToUpdate.destination_uuid) {
+        updated[exitToUpdate.destination_uuid].inboundConnections = {
+          [exitToUpdate.uuid]: renderNode.node.uuid
+        };
+      }
     }
 
     renderNode.inboundConnections = {
       [originalNode.node.exits[0].uuid]: originalNode.node.uuid
     };
-    renderNode.node = mutators.uniquifyNode(renderNode.node);
+
     renderNode.ui.position.top += NODE_SPACING;
     updated = mutators.mergeNode(updated, renderNode);
   } else {
@@ -1060,18 +1094,6 @@ export const onOpenNodeEditor = (settings: NodeEditorSettings) => (
   settings.localizations = [];
   if (translating) {
     let actionToTranslate = action;
-
-    // TODO: this is a hack, would be nice to find how to make that area respond differently
-    // if they clicked just below the actions, treat it as the last action
-    if (!actionToTranslate && node.actions.length > 0) {
-      actionToTranslate = node.actions[node.actions.length - 1];
-      if (
-        actionToTranslate.type !== Types.send_msg &&
-        actionToTranslate.type !== Types.send_broadcast
-      ) {
-        return;
-      }
-    }
 
     const translations = localization[language.id];
     settings.localizations.push(
