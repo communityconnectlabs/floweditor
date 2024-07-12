@@ -79,6 +79,15 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     this.setState({ audio: { value: url } });
   }
 
+  private getUploadedFileName(): string {
+    if (this.state.audio.value && this.state.audio.value.length > 0) {
+      let fullPath = this.state.audio.value;
+      let fullPathSplit = fullPath.split('/');
+      return fullPathSplit[fullPathSplit.length - 1];
+    }
+    return '';
+  }
+
   public render(): JSX.Element {
     const typeConfig = this.props.typeConfig;
 
@@ -94,6 +103,10 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
           focus={true}
           textarea={true}
         />
+
+        {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
+          <p>{this.getUploadedFileName()}</p>
+        )}
 
         <div className={styles.upload_recording_container}>
           <UploadButton
