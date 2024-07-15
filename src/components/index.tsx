@@ -42,6 +42,7 @@ import { ACTIVITY_INTERVAL, downloadJSON, renderIf, onNextRender } from 'utils';
 import { PopTabType } from 'config/interfaces';
 import { TranslatorTab, TranslationBundle } from './translator/TranslatorTab';
 import i18n from 'config/i18n';
+import { AnalyzerExplorer } from './analyzer/AnalyzerExplorer';
 
 const { default: PageVisibility } = require('react-page-visibility');
 
@@ -366,6 +367,15 @@ export class FlowEditor extends React.Component<FlowEditorStoreProps> {
                   ].find(el => Boolean(el[1]))[0]
                 }
                 loadFlowDefinition={this.props.loadFlowDefinition}
+              />
+            )}
+
+            {renderIf(!!this.props.definition)(
+              <AnalyzerExplorer
+                assetStore={this.props.assetStore}
+                definition={this.props.definition}
+                onToggled={this.handleTabPopped}
+                popped={this.props.popped}
               />
             )}
 

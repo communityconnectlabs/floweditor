@@ -82,7 +82,8 @@ export enum AssetType {
   TrackableLink = 'shorten_url',
   Ticketer = 'ticketer',
   Trigger = 'keyword_trigger',
-  URN = 'urn'
+  URN = 'urn',
+  Analyzer = 'analyzer'
 }
 
 export interface Reference {
