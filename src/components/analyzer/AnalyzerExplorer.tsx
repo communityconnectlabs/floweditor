@@ -44,24 +44,42 @@ export class AnalyzerExplorer extends React.Component<
     });
   }
 
+  private loadFlowComprehension(revisionID: number): void {
+    fetch(`${this.props.assetStore.analyzer.endpoint}?revision=${revisionID}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.props.definition)
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          loading: false,
+          text: data.comprehension || 'Failed to load flow comprehension details.'
+        });
+      })
+      .catch(() => {
+        this.setState({
+          loading: false,
+          text: 'Failed to load flow comprehension details.'
+        });
+      });
+  }
+
   public handleTabClicked(): void {
     this.props.onToggled(!this.state.visible, PopTabType.FLOW_ANALYZER);
     this.setState(
       (prevState: AnalyzerExplorerState) => {
         if (!prevState.visible) {
-          fetch(this.props.assetStore.analyzer.endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.props.definition)
-          })
+          fetch(this.props.assetStore.revisions.endpoint)
             .then(response => response.json())
             .then(data => {
-              this.setState({
-                loading: false,
-                text: data.content[0].text || 'Failed to load flow comprehension details.'
-              });
+              let currentRevisionID = data.results[0].id;
+              this.loadFlowComprehension(currentRevisionID);
+            })
+            .catch(() => {
+              this.loadFlowComprehension(0);
             });
         }
         return { visible: !prevState.visible };
