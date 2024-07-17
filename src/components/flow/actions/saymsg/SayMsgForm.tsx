@@ -83,7 +83,9 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     if (this.state.audio.value && this.state.audio.value.length > 0) {
       let fullPath = this.state.audio.value;
       let fullPathSplit = fullPath.split('/');
-      return fullPathSplit[fullPathSplit.length - 1];
+      let filename = fullPathSplit[fullPathSplit.length - 1];
+      filename = decodeURI(filename);
+      return filename;
     }
     return '';
   }
