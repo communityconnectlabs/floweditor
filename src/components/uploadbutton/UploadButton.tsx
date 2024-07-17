@@ -12,7 +12,9 @@ export interface UploadButtonProps {
   removeText: string;
   url: string;
   endpoint: string;
+  preUploadValidation?: (files: FileList) => boolean;
   onUploadChanged: (url: string) => void;
+  fileTypes?: string;
 }
 
 export default class UploadButton extends React.Component<UploadButtonProps, UploadButtonState> {
@@ -31,6 +33,12 @@ export default class UploadButton extends React.Component<UploadButtonProps, Upl
   }
 
   private handleUploadFile(files: FileList): void {
+    if (!!this.props.preUploadValidation) {
+      if (files.length === 0 || !this.props.preUploadValidation(files)) {
+        return;
+      }
+    }
+
     const data = new FormData();
     data.append('file', files[0]);
 
@@ -59,6 +67,7 @@ export default class UploadButton extends React.Component<UploadButtonProps, Upl
             this.filePicker = ele;
           }}
           type="file"
+          accept={!!this.props.fileTypes && this.props.fileTypes}
           onChange={e => this.handleUploadFile(e.target.files)}
         />
         {this.props.url ? (

@@ -14,8 +14,23 @@ import i18n from 'config/i18n';
 import { renderIssues } from '../helpers';
 import { MediaPlayer } from '../../../mediaplayer/MediaPlayer';
 import { renderIf } from '../../../../utils';
+import { isAttachmentsValid } from '../sendmsg/attachments';
 
 import styles from './SayMsgForm.module.scss';
+
+const AUDIO_FILE_TYPES = [
+  '.mp3',
+  '.wav',
+  '.aac',
+  '.flac',
+  '.ogg',
+  '.wma',
+  '.alac',
+  '.aiff',
+  '.pcm',
+  '.dts',
+  '.m4a'
+];
 
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
@@ -75,6 +90,18 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     };
   }
 
+  private validateAttachmentUpload(files: FileList): boolean {
+    return isAttachmentsValid(files, (title, message) => {
+      this.props.mergeEditorState({
+        modalMessage: {
+          title: title,
+          body: message
+        },
+        saving: false
+      });
+    });
+  }
+
   private handleUploadChanged(url: string): void {
     this.setState({ audio: { value: url } });
   }
@@ -117,7 +144,9 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
             removeText="Remove Recording"
             url={this.state.audio.value}
             endpoint={this.context.config.endpoints.attachments}
+            preUploadValidation={this.validateAttachmentUpload.bind(this)}
             onUploadChanged={this.handleUploadChanged}
+            fileTypes={AUDIO_FILE_TYPES.join(',')}
           />
           {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
             <div className={styles.media_player}>

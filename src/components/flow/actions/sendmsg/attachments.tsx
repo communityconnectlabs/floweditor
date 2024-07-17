@@ -37,7 +37,7 @@ const getAttachmentTypeOption = (type: string): SelectOption => {
   return TYPE_OPTIONS.find((option: SelectOption) => option.value === type);
 };
 
-const isAttachmentsValid = (
+export const isAttachmentsValid = (
   files: FileList,
   onAttachmentInvalid: (title: string, message: string) => void
 ) => {
