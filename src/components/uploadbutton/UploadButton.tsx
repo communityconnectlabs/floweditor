@@ -67,7 +67,7 @@ export default class UploadButton extends React.Component<UploadButtonProps, Upl
             this.filePicker = ele;
           }}
           type="file"
-          accept={!!this.props.fileTypes && this.props.fileTypes}
+          accept={!!this.props.fileTypes ? this.props.fileTypes : undefined}
           onChange={e => this.handleUploadFile(e.target.files)}
         />
         {this.props.url ? (

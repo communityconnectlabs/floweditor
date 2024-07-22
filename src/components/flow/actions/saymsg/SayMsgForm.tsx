@@ -18,19 +18,7 @@ import { isAttachmentsValid } from '../sendmsg/attachments';
 
 import styles from './SayMsgForm.module.scss';
 
-const AUDIO_FILE_TYPES = [
-  '.mp3',
-  '.wav',
-  '.aac',
-  '.flac',
-  '.ogg',
-  '.wma',
-  '.alac',
-  '.aiff',
-  '.pcm',
-  '.dts',
-  '.m4a'
-];
+const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
 
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
