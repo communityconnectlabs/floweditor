@@ -370,7 +370,7 @@ export class FlowEditor extends React.Component<FlowEditorStoreProps> {
               />
             )}
 
-            {renderIf(!!this.props.definition)(
+            {renderIf(!!this.props.definition && !!this.context.config.endpoints.analyzer)(
               <AnalyzerExplorer
                 assetStore={this.props.assetStore}
                 definition={this.props.definition}
