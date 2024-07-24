@@ -12,7 +12,9 @@ const SayMsgComp: React.SFC<SayMsg> = (action: SayMsg): JSX.Element => {
     if (action.audio_url && action.audio_url.length > 0) {
       let fullPath = action.audio_url;
       let fullPathSplit = fullPath.split('/');
-      return fullPathSplit[fullPathSplit.length - 1];
+      let filename = fullPathSplit[fullPathSplit.length - 1];
+      filename = decodeURI(filename);
+      return filename;
     }
     return '';
   };
