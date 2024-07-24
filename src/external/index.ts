@@ -270,7 +270,7 @@ export const createAssetStore = (endpoints: Endpoints): Promise<AssetStore> => {
   return new Promise<AssetStore>((resolve, reject) => {
     const assetStore: AssetStore = {
       analyzer: {
-        endpoint: getURL(endpoints.analyzer),
+        endpoint: getURL(endpoints.analyzer || ''),
         type: AssetType.Analyzer,
         items: {}
       },

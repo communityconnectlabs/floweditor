@@ -98,10 +98,10 @@ export class AnalyzerExplorer extends React.Component<
       <div className={classes}>
         <div className={styles.mask} />
         <PopTab
-          header={i18n.t('links.header', 'Flow Comprehension')}
+          header={i18n.t('links.header', 'Flow Analyzer')}
           color="#1e90ff"
           icon="fe-help"
-          label={i18n.t('links.label', 'Flow Comprehension')}
+          label={i18n.t('links.label', 'Flow Analyzer')}
           top={'371px'}
           popTop={'-60px'}
           visible={this.state.visible}
