@@ -14,8 +14,11 @@ import i18n from 'config/i18n';
 import { renderIssues } from '../helpers';
 import { MediaPlayer } from '../../../mediaplayer/MediaPlayer';
 import { renderIf } from '../../../../utils';
+import { isAttachmentsValid } from '../sendmsg/attachments';
 
 import styles from './SayMsgForm.module.scss';
+
+const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
 
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
@@ -75,6 +78,18 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     };
   }
 
+  private validateAttachmentUpload(files: FileList): boolean {
+    return isAttachmentsValid(files, (title, message) => {
+      this.props.mergeEditorState({
+        modalMessage: {
+          title: title,
+          body: message
+        },
+        saving: false
+      });
+    });
+  }
+
   private handleUploadChanged(url: string): void {
     this.setState({ audio: { value: url } });
   }
@@ -83,7 +98,9 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     if (this.state.audio.value && this.state.audio.value.length > 0) {
       let fullPath = this.state.audio.value;
       let fullPathSplit = fullPath.split('/');
-      return fullPathSplit[fullPathSplit.length - 1];
+      let filename = fullPathSplit[fullPathSplit.length - 1];
+      filename = decodeURI(filename);
+      return filename;
     }
     return '';
   }
@@ -115,7 +132,9 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
             removeText="Remove Recording"
             url={this.state.audio.value}
             endpoint={this.context.config.endpoints.attachments}
+            preUploadValidation={this.validateAttachmentUpload.bind(this)}
             onUploadChanged={this.handleUploadChanged}
+            fileTypes={AUDIO_FILE_TYPES.join(',')}
           />
           {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
             <div className={styles.media_player}>
