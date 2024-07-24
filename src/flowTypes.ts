@@ -23,6 +23,7 @@ export interface Environment {
 export interface Endpoints {
   attachments: string;
   attachments_validation: string;
+  analyzer: string;
   resthooks: string;
   lookups: string;
   recents: string;
