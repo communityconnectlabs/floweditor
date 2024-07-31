@@ -26,6 +26,7 @@ import HelpIcon from '../../../helpicon/HelpIcon';
 import variables from '../../../../variables.module.scss';
 import { getCookie } from '../../../../external';
 import MsgCharCounter from '../sendmsg/CharCounter/MsgCharCounter';
+import { isAttachmentsValid, AUDIO_FILE_TYPES } from '../saymsg/SayMsgForm';
 
 export interface MsgLocalizationFormState extends FormState {
   message: StringEntry;
@@ -255,13 +256,19 @@ export default class MsgLocalizationForm extends React.Component<
 
   private handleAttachmentError(title: string, message: string) {
     // @ts-ignore
-    this.props.mergeEditorState({
-      modalMessage: {
-        title: title,
-        body: message
-      },
-      saving: false
-    });
+    !!this.props.mergeEditorState &&
+      // @ts-ignore
+      this.props.mergeEditorState({
+        modalMessage: {
+          title: title,
+          body: message
+        },
+        saving: false
+      });
+  }
+
+  private validateAttachmentUpload(files: FileList): boolean {
+    return isAttachmentsValid(files, this.handleAttachmentError.bind(this));
   }
 
   public render(): JSX.Element {
@@ -363,7 +370,9 @@ export default class MsgLocalizationForm extends React.Component<
           removeText="Remove Recording"
           url={this.state.audio.value}
           endpoint={this.context.config.endpoints.attachments}
+          preUploadValidation={this.validateAttachmentUpload.bind(this)}
           onUploadChanged={this.handleAudioChanged}
+          fileTypes={AUDIO_FILE_TYPES.join(',')}
         />
       );
     }

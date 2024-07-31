@@ -14,11 +14,47 @@ import i18n from 'config/i18n';
 import { renderIssues } from '../helpers';
 import { MediaPlayer } from '../../../mediaplayer/MediaPlayer';
 import { renderIf } from '../../../../utils';
-import { isAttachmentsValid } from '../sendmsg/attachments';
 
 import styles from './SayMsgForm.module.scss';
 
-const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
+export const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
+
+export function isAttachmentsValid(
+  files: FileList,
+  onAttachmentInvalid: (title: string, message: string) => void
+): boolean {
+  const file = files[0];
+  const fileType = file.type.split('/')[0];
+  const fileEncoding = file.name.split('.').pop();
+
+  let title = '';
+  let message = '';
+  let isValid = true;
+
+  if (fileType !== 'audio') {
+    title = 'Invalid Attachment';
+    message = 'Attachment must be audio.';
+    isValid = false;
+  } else if (
+    fileType === 'audio' &&
+    !['mp3', 'm4a', 'x-m4a', 'wav', 'ogg', 'oga'].includes(fileEncoding)
+  ) {
+    title = 'Invalid Format';
+    message = 'Audio attachments must be encoded as mp3, m4a, wav, ogg or oga files.';
+    isValid = false;
+  } else if (file.size > 20971520) {
+    title = 'File Size Exceeded';
+    message =
+      'The file size should be less than 20MB for audio files. Please choose another file and try again.';
+    isValid = false;
+  }
+
+  if (!isValid) {
+    onAttachmentInvalid(title, message);
+  }
+
+  return isValid;
+}
 
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
