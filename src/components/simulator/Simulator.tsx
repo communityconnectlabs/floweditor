@@ -948,9 +948,9 @@ export class Simulator extends React.Component<SimulatorProps, SimulatorState> {
 
     return (
       <div
-          id="sim_container"
-          className={hidden ? styles.tab_hidden : ''}
-          onContextMenu={e => e.stopPropagation()}
+        id="sim_container"
+        className={hidden ? styles.tab_hidden : ''}
+        onContextMenu={e => e.stopPropagation()}
       >
         <PopTab
           header={i18n.t('simulator.header', 'Simulator')}

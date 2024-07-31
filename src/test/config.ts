@@ -38,7 +38,8 @@ export const config: FlowEditorConfig = {
     lookups: '',
     giftcard: '',
     link: '',
-    dialogflow: ''
+    dialogflow: '',
+    analyzer: ''
   },
   onChangeLanguage: (code: string, name: string) => {}
 };

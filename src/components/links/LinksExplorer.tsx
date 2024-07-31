@@ -1,7 +1,7 @@
 import { react as bindCallbacks } from 'auto-bind';
 import classNames from 'classnames/bind';
 import { PopTab } from 'components/poptab/PopTab';
-import { FlowDefinition, FlowDetails } from 'flowTypes';
+import { FlowDetails } from 'flowTypes';
 import React from 'react';
 
 import styles from './LinksExplorer.module.scss';
@@ -40,7 +40,6 @@ export interface LinksExplorerProps {
 }
 
 export interface LinksExplorerState {
-  definition: FlowDefinition;
   visible: boolean;
   links: LinkData[];
   lastRun?: string | Date;
@@ -52,7 +51,6 @@ export class LinksExplorer extends React.Component<LinksExplorerProps, LinksExpl
     super(props);
 
     this.state = {
-      definition: null,
       visible: false,
       links: [],
       processing: true,
