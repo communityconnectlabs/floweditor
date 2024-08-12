@@ -83,7 +83,8 @@ export enum AssetType {
   Ticketer = 'ticketer',
   Trigger = 'keyword_trigger',
   URN = 'urn',
-  Analyzer = 'analyzer'
+  Analyzer = 'analyzer',
+  IVRTranscript = 'ivr_transcript'
 }
 
 export interface Reference {

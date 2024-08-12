@@ -51,6 +51,7 @@ export interface Endpoints {
   editor: string;
   dialogflow: string;
   links: string;
+  ivr_transcript: string;
 }
 
 export interface FlowEditorConfig {

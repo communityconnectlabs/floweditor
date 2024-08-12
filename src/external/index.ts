@@ -383,6 +383,11 @@ export const createAssetStore = (endpoints: Endpoints): Promise<AssetStore> => {
         type: AssetType.Dialogflow,
         id: 'id',
         items: {}
+      },
+      ivr_transcript: {
+        endpoint: getURL(endpoints.ivr_transcript || ''),
+        type: AssetType.IVRTranscript,
+        items: {}
       }
     };
 
