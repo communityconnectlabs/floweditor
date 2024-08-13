@@ -16,6 +16,7 @@ import { MediaPlayer } from '../../../mediaplayer/MediaPlayer';
 import { renderIf } from '../../../../utils';
 
 import styles from './SayMsgForm.module.scss';
+import Button, { ButtonTypes } from 'components/button/Button';
 
 export const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
 
@@ -141,6 +142,32 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     return '';
   }
 
+  private handleRecordingTranscript(): void {
+    if (this.state.audio.value && this.state.audio.value.length > 0) {
+      let audio_url = this.state.audio.value;
+      if (audio_url && this.context.config.endpoints.ivr_transcript) {
+        fetch(this.context.config.endpoints.ivr_transcript, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            audio_url
+          })
+        })
+          .then(response => response.json())
+          .then((data: { text: string }) => {
+            this.handleUpdate({
+              text: this.state.message.value
+                ? `${this.state.message.value}\n\n---\n\n${data.text}`
+                : data.text
+            });
+          })
+          .catch(console.error);
+      }
+    }
+  }
+
   public render(): JSX.Element {
     const typeConfig = this.props.typeConfig;
 
@@ -171,6 +198,13 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
             preUploadValidation={this.validateAttachmentUpload.bind(this)}
             onUploadChanged={this.handleUploadChanged}
             fileTypes={AUDIO_FILE_TYPES.join(',')}
+          />
+          <Button
+            iconName="fe-mic"
+            name={i18n.t('forms.transcript_btn', 'Transcript Recording')}
+            topSpacing={true}
+            onClick={this.handleRecordingTranscript}
+            type={ButtonTypes.tertiary}
           />
           {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
             <div className={styles.media_player}>
