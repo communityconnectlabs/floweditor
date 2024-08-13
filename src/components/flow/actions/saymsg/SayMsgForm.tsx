@@ -199,13 +199,17 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
             onUploadChanged={this.handleUploadChanged}
             fileTypes={AUDIO_FILE_TYPES.join(',')}
           />
-          <Button
-            iconName="fe-mic"
-            name={i18n.t('forms.transcript_btn', 'Transcript Recording')}
-            topSpacing={true}
-            onClick={this.handleRecordingTranscript}
-            type={ButtonTypes.tertiary}
-          />
+          {this.state.audio.value &&
+            this.state.audio.value.length > 0 &&
+            this.context.config.endpoints.ivr_transcript && (
+              <Button
+                iconName="fe-mic"
+                name={i18n.t('forms.transcript_btn', 'Transcript Recording')}
+                topSpacing={true}
+                onClick={this.handleRecordingTranscript}
+                type={ButtonTypes.tertiary}
+              />
+            )}
           {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
             <div className={styles.media_player}>
               <MediaPlayer url={this.state.audio.value} />
