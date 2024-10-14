@@ -10,6 +10,7 @@ export const initializeForm = (settings: NodeEditorSettings): SayMsgFormState =>
     return {
       message: { value: action.text },
       audio: { value: action.audio_url },
+      transcribing: false,
       valid: true
     };
   }
@@ -17,6 +18,7 @@ export const initializeForm = (settings: NodeEditorSettings): SayMsgFormState =>
   return {
     message: { value: '' },
     audio: { value: '' },
+    transcribing: false,
     valid: false
   };
 };

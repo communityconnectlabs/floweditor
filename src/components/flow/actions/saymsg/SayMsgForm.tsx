@@ -60,6 +60,7 @@ export function isAttachmentsValid(
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
   audio: StringEntry;
+  transcribing: boolean;
 }
 
 export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgFormState> {
@@ -143,7 +144,8 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
   }
 
   private handleRecordingTranscript(): void {
-    if (this.state.audio.value && this.state.audio.value.length > 0) {
+    if (this.state.audio.value && this.state.audio.value.length > 0 && !this.state.transcribing) {
+      this.setState({ transcribing: true });
       let audio_url = this.state.audio.value;
       if (audio_url && this.context.config.endpoints.ivr_transcript) {
         fetch(this.context.config.endpoints.ivr_transcript, {
@@ -163,7 +165,10 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
                 : data.text
             });
           })
-          .catch(console.error);
+          .catch(console.error)
+          .finally(() => {
+            this.setState({ transcribing: false });
+          });
       }
     }
   }
@@ -207,6 +212,7 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
                 name={i18n.t('forms.transcript_btn', 'Transcript Recording')}
                 topSpacing={true}
                 onClick={this.handleRecordingTranscript}
+                disabled={this.state.transcribing}
                 type={ButtonTypes.tertiary}
               />
             )}
