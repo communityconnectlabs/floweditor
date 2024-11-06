@@ -39,7 +39,8 @@ export const config: FlowEditorConfig = {
     giftcard: '',
     link: '',
     dialogflow: '',
-    analyzer: ''
+    analyzer: '',
+    ivr_transcript: ''
   },
   onChangeLanguage: (code: string, name: string) => {}
 };

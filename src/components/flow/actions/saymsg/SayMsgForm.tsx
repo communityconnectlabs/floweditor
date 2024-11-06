@@ -16,6 +16,8 @@ import { MediaPlayer } from '../../../mediaplayer/MediaPlayer';
 import { renderIf } from '../../../../utils';
 
 import styles from './SayMsgForm.module.scss';
+import Button, { ButtonTypes } from 'components/button/Button';
+import { AudioTranscript } from '../../../../flowTypes';
 
 export const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
 
@@ -59,6 +61,8 @@ export function isAttachmentsValid(
 export interface SayMsgFormState extends FormState {
   message: StringEntry;
   audio: StringEntry;
+  transcribing: boolean;
+  transcript?: AudioTranscript;
 }
 
 export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgFormState> {
@@ -141,6 +145,46 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
     return '';
   }
 
+  private handleRecordingTranscript(): void {
+    let isAudioAttached = this.state.audio.value && this.state.audio.value.length > 0;
+    let isTranscriptMatch =
+      ((this.state.audio && this.state.audio.value) || '') ===
+      ((this.state.transcript && this.state.transcript.audio_url) || '');
+    if (isAudioAttached && !isTranscriptMatch && !this.state.transcribing) {
+      this.setState({ transcribing: true });
+      let audio_url = this.state.audio.value;
+      if (audio_url && this.context.config.endpoints.ivr_transcript) {
+        fetch(this.context.config.endpoints.ivr_transcript, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            audio_url
+          })
+        })
+          .then(response => response.json())
+          .then((data: { text: string }) => {
+            this.setState({
+              transcript: {
+                audio_url: audio_url,
+                transcription: data.text
+              },
+              message: {
+                value: this.state.message.value
+                  ? `${this.state.message.value}\n\n---\n\n${data.text}`
+                  : data.text
+              }
+            });
+          })
+          .catch(console.error)
+          .finally(() => {
+            this.setState({ transcribing: false });
+          });
+      }
+    }
+  }
+
   public render(): JSX.Element {
     const typeConfig = this.props.typeConfig;
 
@@ -172,6 +216,20 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
             onUploadChanged={this.handleUploadChanged}
             fileTypes={AUDIO_FILE_TYPES.join(',')}
           />
+          {this.state.audio.value &&
+            this.state.audio.value.length > 0 &&
+            ((this.state.transcript && this.state.transcript.audio_url) || '') !==
+              this.state.audio.value &&
+            this.context.config.endpoints.ivr_transcript && (
+              <Button
+                iconName="fe-mic"
+                name={i18n.t('forms.transcript_btn', 'Transcript Recording')}
+                topSpacing={true}
+                onClick={this.handleRecordingTranscript}
+                disabled={this.state.transcribing}
+                type={ButtonTypes.tertiary}
+              />
+            )}
           {renderIf(this.state.audio.value && this.state.audio.value.length > 0)(
             <div className={styles.media_player}>
               <MediaPlayer url={this.state.audio.value} />
