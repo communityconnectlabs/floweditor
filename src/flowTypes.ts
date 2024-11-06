@@ -380,9 +380,15 @@ export interface SendMsg extends Action {
   sharing_config?: SharingConfig;
 }
 
+export interface AudioTranscript {
+  audio_url: string;
+  transcription: string;
+}
+
 export interface SayMsg extends Action {
   text: string;
   audio_url?: string;
+  transcript?: AudioTranscript;
 }
 
 export interface PlayAudio extends Action {

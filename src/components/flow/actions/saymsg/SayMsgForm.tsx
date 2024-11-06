@@ -17,6 +17,7 @@ import { renderIf } from '../../../../utils';
 
 import styles from './SayMsgForm.module.scss';
 import Button, { ButtonTypes } from 'components/button/Button';
+import { AudioTranscript } from '../../../../flowTypes';
 
 export const AUDIO_FILE_TYPES = ['.mp3', '.m4a', '.x-m4a', '.wav', '.ogg', '.oga'];
 
@@ -61,6 +62,7 @@ export interface SayMsgFormState extends FormState {
   message: StringEntry;
   audio: StringEntry;
   transcribing: boolean;
+  transcript?: AudioTranscript;
 }
 
 export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgFormState> {
@@ -144,7 +146,11 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
   }
 
   private handleRecordingTranscript(): void {
-    if (this.state.audio.value && this.state.audio.value.length > 0 && !this.state.transcribing) {
+    let isAudioAttached = this.state.audio.value && this.state.audio.value.length > 0;
+    let isTranscriptMatch =
+      ((this.state.audio && this.state.audio.value) || '') ===
+      ((this.state.transcript && this.state.transcript.audio_url) || '');
+    if (isAudioAttached && !isTranscriptMatch && !this.state.transcribing) {
       this.setState({ transcribing: true });
       let audio_url = this.state.audio.value;
       if (audio_url && this.context.config.endpoints.ivr_transcript) {
@@ -159,10 +165,16 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
         })
           .then(response => response.json())
           .then((data: { text: string }) => {
-            this.handleUpdate({
-              text: this.state.message.value
-                ? `${this.state.message.value}\n\n---\n\n${data.text}`
-                : data.text
+            this.setState({
+              transcript: {
+                audio_url: audio_url,
+                transcription: data.text
+              },
+              message: {
+                value: this.state.message.value
+                  ? `${this.state.message.value}\n\n---\n\n${data.text}`
+                  : data.text
+              }
             });
           })
           .catch(console.error)
@@ -206,6 +218,8 @@ export default class SayMsgForm extends React.Component<ActionFormProps, SayMsgF
           />
           {this.state.audio.value &&
             this.state.audio.value.length > 0 &&
+            ((this.state.transcript && this.state.transcript.audio_url) || '') !==
+              this.state.audio.value &&
             this.context.config.endpoints.ivr_transcript && (
               <Button
                 iconName="fe-mic"

@@ -10,6 +10,7 @@ export const initializeForm = (settings: NodeEditorSettings): SayMsgFormState =>
     return {
       message: { value: action.text },
       audio: { value: action.audio_url },
+      transcript: action.transcript,
       transcribing: false,
       valid: true
     };
@@ -26,6 +27,7 @@ export const initializeForm = (settings: NodeEditorSettings): SayMsgFormState =>
 export const stateToAction = (settings: NodeEditorSettings, state: SayMsgFormState): SayMsg => ({
   text: state.message.value,
   audio_url: state.audio.value,
+  transcript: state.transcript,
   type: Types.say_msg,
   uuid: getActionUUID(settings, Types.say_msg)
 });
