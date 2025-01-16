@@ -11,6 +11,7 @@ export const createTextInput = (props: TextInputProps, handleChange: any, option
       placeholder={props.placeholder || ''}
       maxLength={props.maxLength || -1}
       session
+      spellchecker
       {...optional}
     ></temba-completion>
   ) : (
