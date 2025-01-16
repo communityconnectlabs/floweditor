@@ -212,4 +212,18 @@
 
     showFlowEditor(document.getElementById('floweditor'), config);
   </script>
+  <script type="application/javascript">
+    function spellCheckerFunc(text) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([{
+            from: 12,
+            to: 19,
+            message: 'Possible spelling mistake found.',
+            suggestions: ['speller', 'spewer']
+          }]);
+        }, 1000);
+      });
+    }
+  </script>
 </html>
