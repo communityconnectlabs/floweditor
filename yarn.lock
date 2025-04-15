@@ -1127,10 +1127,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@greatnonprofits-nfp/temba-components@0.26.7":
-  version "0.26.7"
-  resolved "https://registry.yarnpkg.com/@greatnonprofits-nfp/temba-components/-/temba-components-0.26.7.tgz#325549c568bb59a50dfe380ed6645c574c89feef"
-  integrity sha512-J6GFSa1jZLNRsE+xrxthnOtD5ZBOUJnFXAJSp4ymESB8QLwc1iHeR41QNvRVxSOb9Q21msvsRdYKd9JGzqHd1A==
+"@greatnonprofits-nfp/temba-components@0.26.9":
+  version "0.26.9"
+  resolved "https://registry.yarnpkg.com/@greatnonprofits-nfp/temba-components/-/temba-components-0.26.9.tgz#9ec85f8dd35ad6bdbcd0479755b73e8fa3a0ebe1"
+  integrity sha512-PdH5iCSvbYvMFX0iLCa7dFGBWb1XIH+4xRgGmtmAYJLuP37jP0PlOJxp8Z+4biV9YdimRwq3WxgZ/fDh2DptKQ==
   dependencies:
     flru "^1.0.2"
     geojson "^0.5.0"
